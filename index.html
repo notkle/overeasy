@@ -184,6 +184,57 @@
   <script>
     const WORKER = 'https://overeasy.sotempyhehe.workers.dev';
 
+    const PROMPT = `You are the step-compression engine for overeasy, a cooking app built around one philosophy: compress the container, never the content.
+
+YOUR MISSION:
+Transform verbose recipe steps into the shortest possible instruction that loses nothing a cook actually needs. Every measurement, temperature, time, technique, and sensory cue must survive. What gets cut: filler words, repeated context, blogger commentary, hedging language, redundant explanations.
+
+BRIEF WRITING RULES:
+- Write in direct imperative voice. "Whisk eggs" not "You'll want to whisk the eggs together."
+- Cut anything that isn't an action, a quantity, a time, a temp, or a sensory cue.
+- If a step has multiple distinct actions, use a period to separate them. Do not combine into one run-on.
+- Never drop a measurement, temperature, or doneness test — these are sacred.
+- Sensory cues ("golden brown", "slightly tacky", "hollow sound") are as important as measurements — keep every one.
+- Strip filler: "feel free to", "you can also", "make sure to", "it's important that", "at this point", "go ahead and", "simply", "just", "basically", "now".
+- If a step includes a test (poke test, windowpane test, toothpick test) — keep it, compress to one sentence.
+- Maximum 2 sentences for simple steps. 3 sentences only if the step genuinely has 3 distinct required actions.
+
+COLOR CODING — wrap in these exact HTML spans:
+- Measurements/quantities/temps: <span class="measure">...</span> e.g. 2 cups, 350°F, 1 tsp
+- Times/durations: <span class="timer">...</span> e.g. 5 minutes, 1–2 hours
+- Sensory/doneness cues: <span class="sensory">...</span> e.g. golden brown, slightly tacky, doubled in size
+
+TAGS — extract only what exists in the step, do not invent:
+- { "type": "time", "label": "X min" } for any timed action
+- { "type": "temp", "label": "350°F" } for any oven or pan temperature
+- { "type": "check", "label": "short name" } for any doneness test or visual check
+
+hasDepth = true if the original step contained meaningful detail beyond what fits in the brief (tips, tests, troubleshooting, explanations).
+
+INGREDIENTS — parse qty and name cleanly. qty = amount + unit only. name = ingredient name only, no amounts.
+
+Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
+{
+  "title": "...",
+  "rating": "...",
+  "ratingCount": "...",
+  "time": "...",
+  "yield": "...",
+  "ingredients": [
+    { "qty": "...", "name": "..." }
+  ],
+  "steps": [
+    {
+      "brief": "...html with spans...",
+      "original": "...verbatim original step text...",
+      "hasDepth": true,
+      "tags": [
+        { "type": "time|temp|check", "label": "..." }
+      ]
+    }
+  ]
+}`;
+
     const DEMOS = {
       bread: {
         title: 'homemade sandwich bread', rating: '4.9', ratingCount: '2.4k', time: '2 hrs 30 min', yield: '1 loaf', source: 'demo',
@@ -195,9 +246,9 @@
         steps: [
           { brief: 'Whisk together <span class="measure">1¼ cups warm water</span> and <span class="measure">2¼ tsp yeast</span>. Let sit <span class="timer">5–10 minutes</span> until <span class="sensory">foamy and fragrant</span>.', tags: [{type:'time',label:'10 min'},{type:'check',label:'foamy test'}], original: 'Whisk the warm water and yeast together in the bowl of your stand mixer. Cover and allow to sit for 5-10 minutes. The mixture should be frothy after 10 minutes. If not, start over with fresh yeast.', hasDepth: true },
           { brief: 'Add <span class="measure">2 tbsp honey</span>, <span class="measure">2 tbsp butter</span>, and <span class="measure">1½ tsp salt</span>. Mix briefly on low.', tags: [], original: 'Add the honey, butter, and salt. Beat on low speed for 30 seconds to combine.', hasDepth: false },
-          { brief: 'Knead on medium <span class="timer">5 full minutes</span>. If sticky, add flour <span class="measure">1 tsp</span> at a time. Should <span class="sensory">slowly bounce back</span> when poked.', tags: [{type:'time',label:'5 min'},{type:'check',label:'poke test'},{type:'check',label:'windowpane test'}], original: 'Keep the dough in the mixer and beat for an additional 5 full minutes, or knead by hand on a lightly floured surface. If the dough becomes too sticky, sprinkle 1 teaspoon of flour at a time. Do not add more flour than you need. After kneading, poke it — if it slowly bounces back, your dough is ready.', hasDepth: true },
+          { brief: 'Knead on medium <span class="timer">5 full minutes</span>. If sticky, add flour <span class="measure">1 tsp</span> at a time. Dough should <span class="sensory">slowly bounce back</span> when poked.', tags: [{type:'time',label:'5 min'},{type:'check',label:'poke test'},{type:'check',label:'windowpane test'}], original: 'Keep the dough in the mixer and beat for an additional 5 full minutes, or knead by hand on a lightly floured surface. If the dough becomes too sticky, sprinkle 1 teaspoon of flour at a time. After kneading, poke it — if it slowly bounces back, your dough is ready.', hasDepth: true },
           { brief: 'Place in oiled bowl, cover. Rise in a warm spot <span class="timer">1–2 hours</span> until <span class="sensory">doubled in size</span>.', tags: [{type:'time',label:'1–2 hrs'},{type:'check',label:'double size'}], original: 'Lightly grease a large bowl. Place the dough in the bowl, turning to coat all sides. Cover and allow to rise at room temperature until double in size, about 1-2 hours.', hasDepth: false },
-          { brief: 'Bake at <span class="measure">350°F</span> for <span class="timer">30–35 minutes</span> until golden. Internal temp <span class="measure">195–200°F</span>. Tap bottom — should sound <span class="sensory">hollow</span>.', tags: [{type:'temp',label:'350°F'},{type:'time',label:'30–35 min'},{type:'check',label:'hollow tap'}], original: 'Bake for 30-35 minutes at 350°F until the top is golden brown. Tap the bottom — it should sound hollow. Use an instant-read thermometer — done when center reads 195-200°F. Cool in pan 10 minutes, then on a wire rack.', hasDepth: true },
+          { brief: 'Bake at <span class="measure">350°F</span> for <span class="timer">30–35 minutes</span> until golden. Internal temp <span class="measure">195–200°F</span>. Tap bottom — should sound <span class="sensory">hollow</span>.', tags: [{type:'temp',label:'350°F'},{type:'time',label:'30–35 min'},{type:'check',label:'hollow tap'}], original: 'Bake for 30-35 minutes at 350°F until golden brown. Tap the bottom — it should sound hollow. Done when center reads 195-200°F. Cool in pan 10 minutes, then on a wire rack.', hasDepth: true },
         ]
       },
       pasta: {
@@ -208,9 +259,9 @@
         ],
         steps: [
           { brief: 'Toast <span class="measure">2 tsp peppercorns</span> in a dry skillet <span class="timer">1–2 minutes</span> until <span class="sensory">fragrant and slightly smoking</span>. Crush coarsely.', tags: [{type:'time',label:'2 min'}], original: 'Add whole peppercorns to a large, dry skillet over medium heat. Toast, tossing frequently, until fragrant and wisps of smoke appear, 1 to 2 minutes. Crush into a coarse grind — not powder.', hasDepth: true },
-          { brief: 'Cook pasta in lightly salted water. Pull <span class="timer">2 minutes</span> before al dente. Reserve <span class="measure">1½ cups</span> pasta water before draining.', tags: [{type:'check',label:'save pasta water'}], original: 'Bring a large pot of water to a boil. Use about half as much salt as usual — the cheese is very salty. Cook pasta until 2 minutes shy of al dente. Reserve at least 1½ cups of starchy pasta water before draining.', hasDepth: true },
-          { brief: 'Mix grated cheeses with <span class="measure">¼ cup</span> warm pasta water into a <span class="sensory">smooth, paste-like</span> slurry.', tags: [{type:'check',label:'smooth paste'}], original: 'Combine the finely grated Pecorino and Parmesan. Add about ¼ cup of the hot pasta water and work until it forms a smooth, thick paste. Cheese must be grated very finely — coarse grating will make the sauce grainy.', hasDepth: true },
-          { brief: 'Remove pan from heat. Add cheese paste, tossing rapidly. Add pasta water <span class="measure">1–2 tbsp</span> at a time until sauce is <span class="sensory">glossy and clings</span> to each strand.', tags: [{type:'check',label:'glossy sauce'}], original: 'Remove the pan from the heat entirely — critical. Add the cheese paste and toss furiously, adding pasta water a little at a time. The residual heat melts the cheese without scrambling it. Keep tossing until a glossy sauce clings to every strand.', hasDepth: true },
+          { brief: 'Cook pasta in lightly salted water. Pull <span class="timer">2 minutes</span> before al dente. Reserve <span class="measure">1½ cups</span> pasta water before draining.', tags: [{type:'check',label:'save pasta water'}], original: 'Bring a large pot of water to a boil. Use about half as much salt as usual. Cook pasta until 2 minutes shy of al dente. Reserve at least 1½ cups of starchy pasta water before draining.', hasDepth: true },
+          { brief: 'Mix grated cheeses with <span class="measure">¼ cup</span> warm pasta water into a <span class="sensory">smooth, paste-like</span> slurry.', tags: [{type:'check',label:'smooth paste'}], original: 'Combine the finely grated Pecorino and Parmesan. Add about ¼ cup of the hot pasta water and work until it forms a smooth, thick paste. Cheese must be grated very finely.', hasDepth: true },
+          { brief: 'Remove pan from heat. Add cheese paste, tossing rapidly. Add pasta water <span class="measure">1–2 tbsp</span> at a time until sauce is <span class="sensory">glossy and clings</span> to each strand.', tags: [{type:'check',label:'glossy sauce'}], original: 'Remove the pan from the heat entirely. Add the cheese paste and toss furiously, adding pasta water a little at a time. Keep tossing until a glossy sauce clings to every strand.', hasDepth: true },
         ]
       },
       cookies: {
@@ -224,73 +275,53 @@
         ],
         steps: [
           { brief: 'Whisk <span class="measure">2¼ cups flour</span>, <span class="measure">1 tsp baking soda</span>, <span class="measure">1 tsp salt</span>. Set aside. Preheat oven to <span class="measure">375°F</span>.', tags: [{type:'temp',label:'375°F'}], original: 'Preheat oven to 375°F. Stir together the flour, baking soda, and salt in a small bowl. Set aside.', hasDepth: false },
-          { brief: 'Beat <span class="measure">1 cup butter</span> and both sugars <span class="timer">3–4 minutes</span> until <span class="sensory">light, fluffy, and pale</span>.', tags: [{type:'time',label:'3–4 min'},{type:'check',label:'pale & fluffy'}], original: 'Beat butter and both sugars together on medium-high until very light and fluffy, about 3-4 minutes. Don\'t rush — proper creaming creates the lift.', hasDepth: true },
+          { brief: 'Beat <span class="measure">1 cup butter</span> and both sugars <span class="timer">3–4 minutes</span> until <span class="sensory">light, fluffy, and pale</span>.', tags: [{type:'time',label:'3–4 min'},{type:'check',label:'pale & fluffy'}], original: 'Beat butter and both sugars together on medium-high until very light and fluffy, about 3-4 minutes.', hasDepth: true },
           { brief: 'Add <span class="measure">2 eggs</span> one at a time, beating after each. Add <span class="measure">2 tsp vanilla</span>. Scrape bowl.', tags: [], original: 'Add eggs one at a time, beating well after each. Add vanilla. Scrape down sides and bottom of bowl.', hasDepth: false },
-          { brief: 'Add flour mixture on low until <span class="sensory">just combined</span>. Fold in <span class="measure">2 cups</span> chocolate chips by hand. Do not overmix.', tags: [{type:'check',label:"don't overmix"}], original: 'Add flour mixture all at once on lowest speed until just combined — a few streaks of flour are fine. Overmixing develops gluten and toughens cookies. Fold in chips by hand.', hasDepth: true },
-          { brief: 'Scoop <span class="measure">1½ tbsp</span> balls <span class="measure">2 inches</span> apart on lined sheets. Bake <span class="timer">9–11 minutes</span> until edges are golden.', tags: [{type:'temp',label:'375°F'},{type:'time',label:'9–11 min'}], original: 'Drop rounded tablespoons of dough 2 inches apart on baking sheets. Bake 9-11 minutes until golden. For chewier cookies, pull out when centers still look slightly underdone.', hasDepth: true },
-          { brief: 'Cool on sheet <span class="timer">5 minutes</span> — they\'ll look <span class="sensory">underdone but will firm up</span>. Then transfer to a rack.', tags: [{type:'time',label:'5 min'},{type:'check',label:'carryover baking'}], original: 'Cool on baking sheets 5 minutes before removing. They will look underdone — intentional. They continue to cook on the hot sheet and firm up to perfect chewy texture as they cool.', hasDepth: true },
+          { brief: 'Add flour mixture on low until <span class="sensory">just combined</span>. Fold in <span class="measure">2 cups</span> chocolate chips by hand.', tags: [{type:'check',label:"don't overmix"}], original: 'Add flour mixture all at once on lowest speed until just combined — a few streaks of flour are fine. Overmixing develops gluten and toughens cookies. Fold in chips by hand.', hasDepth: true },
+          { brief: 'Scoop <span class="measure">1½ tbsp</span> balls <span class="measure">2 inches</span> apart. Bake <span class="timer">9–11 minutes</span> until edges are golden.', tags: [{type:'temp',label:'375°F'},{type:'time',label:'9–11 min'}], original: 'Drop rounded tablespoons of dough 2 inches apart on baking sheets. Bake 9-11 minutes until golden. Pull out when centers still look slightly underdone.', hasDepth: true },
+          { brief: 'Cool on sheet <span class="timer">5 minutes</span> — will look <span class="sensory">underdone but firm up</span>. Transfer to rack.', tags: [{type:'time',label:'5 min'},{type:'check',label:'carryover baking'}], original: 'Cool on baking sheets 5 minutes before removing. They will look underdone — intentional. They firm up to perfect chewy texture as they cool.', hasDepth: true },
         ]
       }
     };
 
-    const log = (msg, data, color='#F2A61D') => {
-      if (data !== undefined) {
-        console.log('%c[overeasy] ' + msg, `color:${color};font-weight:bold`, data);
-      } else {
-        console.log('%c[overeasy] ' + msg, `color:${color};font-weight:bold`);
-      }
-    };
-    const err = (msg, data) => {
-      if (data !== undefined) {
-        console.error('%c[overeasy ERROR] ' + msg, 'color:red;font-weight:bold', data);
-      } else {
-        console.error('%c[overeasy ERROR] ' + msg, 'color:red;font-weight:bold');
-      }
-    };
+    const log = (msg, data, color='#F2A61D') => data !== undefined
+      ? console.log('%c[overeasy] ' + msg, `color:${color};font-weight:bold`, data)
+      : console.log('%c[overeasy] ' + msg, `color:${color};font-weight:bold`);
+    const err = (msg, data) => data !== undefined
+      ? console.error('%c[overeasy ERROR] ' + msg, 'color:red;font-weight:bold', data)
+      : console.error('%c[overeasy ERROR] ' + msg, 'color:red;font-weight:bold');
 
     async function handleUrl() {
       const url = document.getElementById('url-input').value.trim();
       if (!url) return;
       if (!url.startsWith('http')) { showError('please enter a full url starting with https://'); return; }
-
       hideError();
       document.getElementById('go-btn').disabled = true;
       showLoading('fetching recipe...', 'this usually takes 10–15 seconds');
-
-      log('firing request to worker: ' + WORKER);
-      log('recipe url being sent: ' + url);
+      log('sending to worker: ' + url);
 
       try {
         const res = await fetch(WORKER, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url })
+          body: JSON.stringify({ url, prompt: PROMPT })
         });
-
-        log('worker HTTP status: ' + res.status);
-
+        log('worker status: ' + res.status);
         const rawText = await res.text();
-        log('raw worker response body:', rawText);
-
+        log('raw response:', rawText);
         let data;
         try {
           data = JSON.parse(rawText);
-          log('parsed response object:', data);
-        } catch (parseErr) {
-          err('could not parse worker response as JSON', parseErr);
-          err('raw text was:', rawText);
-          throw new Error('worker sent non-JSON: ' + rawText.slice(0, 300));
+        } catch (e) {
+          err('could not parse response', e);
+          throw new Error('non-JSON response: ' + rawText.slice(0, 200));
         }
-
         if (!res.ok || data.error) {
-          err('worker returned error:', data);
-          throw new Error(data.error || 'worker error, no message');
+          err('worker error:', data);
+          throw new Error(data.error || 'worker error');
         }
-
-        log('recipe extracted successfully, source: ' + data.source);
-        log('recipe object:', data.recipe, '#0F6E56');
+        log('recipe received:', data.recipe, '#0F6E56');
         renderRecipe(data.recipe, data.source);
-
       } catch (e) {
         err('final catch:', e.message);
         hideLoading();
