@@ -255,6 +255,9 @@
 
     const PROMPT = `You are the step-compression engine for overeasy, a cooking app built around one philosophy: compress the container, never the content.
 
+INPUT FORMAT:
+The recipe text may be markdown with section headers (### Step One, ### Rise, etc.) and numbered lists. Ignore all section headers — treat every numbered item across all sections as a sequential step in order. Strip any blogger intro text, tips sections, or footnotes that aren't part of the actual instructions.
+
 YOUR MISSION:
 Transform verbose recipe steps into the shortest possible instruction that loses nothing a cook actually needs. Every measurement, temperature, time, technique, and sensory cue must survive. What gets cut: filler words, repeated context, blogger commentary, hedging language, redundant explanations.
 
@@ -265,7 +268,7 @@ BRIEF WRITING RULES:
 - Never drop a measurement, temperature, or doneness test — these are sacred.
 - Sensory cues ("golden brown", "slightly tacky", "hollow sound") are as important as measurements — keep every one.
 - Strip filler: "feel free to", "you can also", "make sure to", "it's important that", "at this point", "go ahead and", "simply", "just", "basically", "now".
-- If a step includes a test (poke test, windowpane test, toothpick test) — keep it, compress to one sentence.
+- If a step includes a test (poke test, windowpane test, toothpick test) — keep it, compress to one sentence max.
 - Maximum 2 sentences for simple steps. 3 sentences only if the step genuinely has 3 distinct required actions.
 
 COLOR CODING — wrap in these exact HTML spans:
@@ -282,7 +285,9 @@ hasDepth = true if the original step contained meaningful detail beyond what fit
 
 INGREDIENTS — parse qty and name cleanly. qty = amount + unit only. name = ingredient name only, no amounts.
 
-Also extract the best image URL from the recipe if available — prefer a large hero/main image.
+Extract image URL if present in the text, otherwise empty string.
+Extract title, total time, yield/servings from the text header if present.
+Rating and ratingCount will usually not be in pasted text — leave as empty string if absent.
 
 Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
 {
@@ -291,7 +296,7 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
   "ratingCount": "...",
   "time": "...",
   "yield": "...",
-  "image": "...url or empty string...",
+  "image": "...",
   "ingredients": [
     { "qty": "...", "name": "..." }
   ],
