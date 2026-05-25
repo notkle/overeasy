@@ -178,7 +178,7 @@
 
     /* steps */
     .steps-list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; padding-bottom: calc(40px + var(--safe-bottom)); }
-    .step-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 18px; overflow: hidden; }
+    .step-card-base { background: var(--card); border: 0.5px solid var(--border); border-radius: 18px; overflow: hidden; }
     .step-main { padding: 15px 17px; }
     .step-num { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 9px; display: flex; align-items: center; }
     .depth-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--yolk); margin-left: auto; flex-shrink: 0; }
@@ -198,6 +198,65 @@
     .step-original.open { display: block; }
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* card flip */
+    .step-card { perspective: 1000px; }
+    .step-card-inner { position: relative; transform-style: preserve-3d; transition: transform 0.45s ease; min-height: 120px; }
+    .step-card-inner.flipped { transform: rotateY(180deg); }
+    .step-card-front, .step-card-back {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--card);
+      border: 0.5px solid var(--border);
+    }
+    .step-card-back {
+      position: absolute;
+      inset: 0;
+      transform: rotateY(180deg);
+      padding: 15px 17px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+    .step-card-back .back-title {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .step-card-back .back-ing {
+      font-size: 13px;
+      color: var(--shell);
+      padding: 5px 0;
+      border-bottom: 0.5px solid var(--border);
+      display: flex;
+      gap: 10px;
+    }
+    .step-card-back .back-ing:last-child { border-bottom: none; }
+    .step-card-back .back-qty { color: var(--measure); font-weight: 500; min-width: 80px; flex-shrink: 0; }
+    .flip-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .flip-btn .logo-mini { font-family: 'Fraunces', serif; font-weight: 300; font-size: 12px; color: var(--yolk); }
+
     /* nav bar */
     .nav-bar { display: flex; align-items: center; justify-content: space-around; padding: 10px 0 calc(10px + var(--safe-bottom)); background: var(--bg); border-top: 0.5px solid var(--border); position: sticky; bottom: 0; z-index: 100; }
     .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 4px 16px; font-family: "DM Sans", sans-serif; }
@@ -248,8 +307,10 @@
 <body>
   <div class="app">
     <div class="header">
-      <div class="logo">over<span>easy</span></div>
-      <i class="ti ti-adjustments-horizontal" style="font-size:20px;color:var(--muted)" aria-hidden="true"></i>
+      <div>
+        <div class="logo">over<span>easy</span></div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:0.04em;margin-top:1px;">a pestle companion app</div>
+      </div>
     </div>
 
     <div class="screen active" id="home-screen">
@@ -547,25 +608,45 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
       ).join('');
 
       const ingHeader = document.getElementById('ing-header');
-      ingHeader.classList.remove('open');
-      ingHeader.querySelector('span').textContent = 'show ingredients';
-      document.getElementById('ing-list').classList.remove('open');
+      ingHeader.classList.add('open');
+      ingHeader.querySelector('span').textContent = 'hide ingredients';
+      document.getElementById('ing-list').classList.add('open');
 
       const steps = data.steps || [];
+      const ingRows = (data.ingredients||[]).map(i =>
+        `<div class="back-ing"><span class="back-qty">${i.qty||''}</span><span>${i.name||''}</span></div>`
+      ).join('');
+
       document.getElementById('steps-list').innerHTML = steps.map((step, idx) => {
         const tags = (step.tags||[]).map(t => `<span class="step-tag ${t.type}">${t.label}</span>`).join('');
         const dot = step.hasDepth ? `<span class="depth-dot"></span>` : '';
-        return `<div class="step-card">
-          <div class="step-main">
-            <div class="step-num">step ${idx+1} of ${steps.length}${dot}</div>
-            <div class="step-brief">${step.brief||''}</div>
-            ${tags ? `<div class="step-tags">${tags}</div>` : ''}
+        return `<div class="step-card" style="background:transparent;border:none;">
+          <div class="step-card-inner" id="card-inner-${idx}">
+            <div class="step-card-front">
+              <div class="step-main">
+                <div class="step-num">
+                  step ${idx+1} of ${steps.length}${dot}
+                  <button class="flip-btn" style="margin-left:auto" onclick="flipCard(${idx})">
+                    <span class="logo-mini">oe</span> recipe
+                  </button>
+                </div>
+                <div class="step-brief">${step.brief||''}</div>
+                ${tags ? `<div class="step-tags">${tags}</div>` : ''}
+              </div>
+              <button class="drawer-toggle" onclick="toggleStep(this)">
+                <span>original notes</span>
+                <i class="ti ti-chevron-down"></i>
+              </button>
+              <div class="step-original">${step.original||''}</div>
+            </div>
+            <div class="step-card-back">
+              <div class="back-title">
+                <span>ingredients</span>
+                <button class="flip-btn" onclick="flipCard(${idx})"><i class="ti ti-x" style="font-size:12px"></i> close</button>
+              </div>
+              ${ingRows}
+            </div>
           </div>
-          <button class="drawer-toggle" onclick="toggleStep(this)">
-            <span>original notes</span>
-            <i class="ti ti-chevron-down"></i>
-          </button>
-          <div class="step-original">${step.original||''}</div>
         </div>`;
       }).join('');
 
@@ -579,6 +660,11 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
     function toggleStep(btn) {
       btn.classList.toggle('open');
       btn.nextElementSibling.classList.toggle('open');
+    }
+
+    function flipCard(idx) {
+      const inner = document.getElementById('card-inner-' + idx);
+      if (inner) inner.classList.toggle('flipped');
     }
 
     function toggleIngredients() {
