@@ -415,12 +415,13 @@
 
   <!-- cook mode overlay -->
   <div id="cook-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:300;max-width:430px;margin:0 auto;flex-direction:column;">
-    <div style="padding:calc(14px + var(--safe-top)) 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);">
+    <div style="padding:calc(14px + var(--safe-top)) 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);flex-shrink:0;">
       <div style="font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);" id="cook-step-label">step 1 of 8</div>
-      <button onclick="closeCookMode()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;display:flex;align-items:center;gap:4px;"><i class="ti ti-x" style="font-size:16px"></i></button>
+      <button onclick="closeCookMode()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;"><i class="ti ti-x" style="font-size:16px"></i></button>
     </div>
-    <div id="cook-body" onclick="cookNext()" style="flex:1;padding:32px 28px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;overflow-y:auto;"></div>
-    <div style="padding:20px 28px calc(20px + var(--safe-bottom));display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);">
+    <div id="cook-body" onclick="cookBodyTap(event)" style="flex:1;padding:32px 28px 20px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;overflow-y:auto;min-height:0;"></div>
+    <div id="cook-drawers" style="flex-shrink:0;"></div>
+    <div style="padding:16px 28px calc(16px + var(--safe-bottom));display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);flex-shrink:0;">
       <button onclick="cookPrev()" id="cook-prev" style="background:var(--card);border:0.5px solid var(--border);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:20px;"><i class="ti ti-arrow-left"></i></button>
       <div id="cook-dots" style="display:flex;gap:6px;"></div>
       <button onclick="cookNext()" id="cook-next" style="background:var(--yolk);border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#1A1814;font-size:20px;"><i class="ti ti-arrow-right"></i></button>
@@ -635,13 +636,23 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
         const tags = (step.tags||[]).map(t => `<span class="step-tag ${t.type}">${t.label}</span>`).join('');
         const dot = step.hasDepth ? `<span class="depth-dot"></span>` : '';
 
-        // match ingredients mentioned in this step's brief or original
+        // match ingredients for this step
+        // strategy: extract meaningful words from step text, check if ANY word
+        // from the ingredient name appears in the step text — prefers recall over precision
         const stepText = ((step.brief||'') + ' ' + (step.original||'')).toLowerCase().replace(/<[^>]+>/g,'');
+        // extract all meaningful words (3+ chars) from step text
+        const stepWords = stepText.split(/[\s,.()\/]+/).filter(w => w.length >= 3);
         const stepIngs = allIngredients.filter(i => {
-          const name = i.name.toLowerCase().replace(/,.*$/, '').replace(/\(.*?\)/g, '').trim();
-          // check each word of the ingredient name (2+ chars) appears in the step text
-          const words = name.split(/\s+/).filter(w => w.length > 2);
-          return words.length > 0 && words.every(w => stepText.includes(w));
+          // normalize ingredient name: strip descriptors, keep core noun(s)
+          const name = i.name.toLowerCase()
+            .replace(/,.*$/, '')
+            .replace(/\(.*?\)/g, '')
+            .replace(/\b(fresh|dried|chopped|minced|sliced|diced|grated|shredded|cooked|uncooked|whole|large|small|medium|extra|lean|boneless|skinless|unsalted|salted|softened|melted|divided|optional|virgin|store-bought|instant|active|dry|granulated|powdered|packed|pure|light|dark|unbleached|all-purpose)\b/g, '')
+            .replace(/\s+/g, ' ').trim();
+          // get the meaningful words from the ingredient name
+          const ingWords = name.split(/\s+/).filter(w => w.length >= 3);
+          // match if ANY ingredient word appears in the step text words
+          return ingWords.some(w => stepWords.some(sw => sw.includes(w) || w.includes(sw)));
         });
         const ingRows = stepIngs.length > 0
           ? stepIngs.map(i => `<div class="back-ing"><span class="back-qty">${i.qty||''}</span><span>${i.name||''}</span></div>`).join('')
@@ -989,31 +1000,54 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
 
       // match ingredients for this step
       const stepText = ((step.brief||'') + ' ' + (step.original||'')).toLowerCase().replace(/<[^>]+>/g,'');
+      const stepWords = stepText.split(/[\s,.()\/]+/).filter(w => w.length >= 3);
       const stepIngs = currentRecipe && currentRecipe.ingredients
         ? currentRecipe.ingredients.filter(i => {
-            const name = i.name.toLowerCase().replace(/,.*$/, '').replace(/\(.*?\)/g,'').trim();
-            const words = name.split(/\s+/).filter(w => w.length > 2);
-            return words.length > 0 && words.every(w => stepText.includes(w));
+            const name = i.name.toLowerCase()
+              .replace(/,.*$/, '')
+              .replace(/\(.*?\)/g,'')
+              .replace(/\b(fresh|dried|chopped|minced|sliced|diced|grated|shredded|cooked|uncooked|whole|large|small|medium|extra|lean|boneless|skinless|unsalted|salted|softened|melted|divided|optional|virgin|store-bought|instant|active|dry|granulated|powdered|packed|pure|light|dark|unbleached|all-purpose)\b/g,'')
+              .replace(/\s+/g,' ').trim();
+            const ingWords = name.split(/\s+/).filter(w => w.length >= 3);
+            return ingWords.some(w => stepWords.some(sw => sw.includes(w) || w.includes(sw)));
           })
         : [];
 
-      const ingBlock = stepIngs.length > 0
-        ? '<div style="margin-top:28px;border-top:0.5px solid var(--border);padding-top:16px;">' +
-          '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">this step</div>' +
-          stepIngs.map(i =>
-            '<div style="display:flex;gap:10px;font-size:14px;padding:5px 0;border-bottom:0.5px solid var(--border);">' +
-            '<span style="color:var(--measure);font-weight:500;min-width:90px;flex-shrink:0">' + (i.qty||'') + '</span>' +
-            '<span style="color:var(--shell)">' + i.name + '</span></div>'
-          ).join('') + '</div>'
-        : '';
-
+      // main body — step content, tap to advance
       document.getElementById('cook-body').innerHTML =
-        '<div style="font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">step ' + (cookIdx+1) + '</div>' +
+        '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;">' +
+          'step ' + (cookIdx+1) + ' of ' + total +
+          (stepIngs.length > 0
+            ? '<button onclick="event.stopPropagation();toggleCookMeasure()" id="cook-measure-btn" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;"><i class=\"ti ti-ruler-measure\" style=\"font-size:14px;color:var(--measure)\"></i></button>'
+            : '') +
+        '</div>' +
         '<div style="font-size:22px;line-height:1.55;color:var(--shell);">' + (step.brief||'') + '</div>' +
         (tags ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:24px;">' + tags + '</div>' : '') +
-        ingBlock +
-        '<div style="margin-top:32px;font-size:12px;color:var(--muted);text-align:center;">tap screen or use arrows to navigate</div>';
+        '<div style="margin-top:28px;font-size:12px;color:var(--muted);text-align:center;">tap to advance</div>';
 
+      // drawers — original notes + ingredients (same pattern as cards)
+      const ingRows = stepIngs.map(i =>
+        '<div style="display:flex;gap:10px;font-size:13px;padding:6px 0;border-bottom:0.5px solid var(--border);">' +
+        '<span style="color:var(--measure);font-weight:500;min-width:80px;flex-shrink:0">' + (i.qty||'') + '</span>' +
+        '<span style="color:var(--shell)">' + i.name + '</span></div>'
+      ).join('');
+
+      document.getElementById('cook-drawers').innerHTML =
+        // measure drawer
+        (stepIngs.length > 0
+          ? '<div id="cook-measure-drawer" style="display:none;padding:12px 28px 14px;border-top:0.5px solid var(--border);background:var(--bg2);">' +
+            '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">this step</div>' +
+            ingRows + '</div>'
+          : '') +
+        // original notes drawer
+        '<button onclick="event.stopPropagation();toggleCookOriginal()" style="width:100%;background:var(--bg2);border:none;border-top:0.5px solid var(--border);padding:10px 28px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);">' +
+          '<span>original notes</span><i class="ti ti-chevron-down" id="cook-orig-chevron" style="font-size:14px;transition:transform 0.2s"></i>' +
+        '</button>' +
+        '<div id="cook-orig-drawer" style="display:none;padding:13px 28px 15px;font-size:13px;line-height:1.72;color:var(--muted);background:var(--bg2);font-style:italic;border-top:0.5px solid var(--border);">' +
+          (step.original||'') +
+        '</div>';
+
+      // dots
       document.getElementById('cook-dots').innerHTML = cookSteps.map((_, i) =>
         '<div style="width:' + (i === cookIdx ? '18' : '6') + 'px;height:6px;border-radius:3px;background:' + (i === cookIdx ? 'var(--yolk)' : 'var(--border-med)') + ';transition:all 0.2s"></div>'
       ).join('');
@@ -1024,7 +1058,27 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
         : '<i class="ti ti-arrow-right"></i>';
     }
 
+    function cookBodyTap(e) {
+      // don't advance if tapping a button inside the body
+      if (e.target.closest('button')) return;
+      cookNext();
+    }
 
+    function toggleCookMeasure() {
+      const drawer = document.getElementById('cook-measure-drawer');
+      if (drawer) drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleCookOriginal() {
+      const drawer = document.getElementById('cook-orig-drawer');
+      const chevron = document.getElementById('cook-orig-chevron');
+      if (!drawer) return;
+      const open = drawer.style.display !== 'none';
+      drawer.style.display = open ? 'none' : 'block';
+      chevron.style.transform = open ? '' : 'rotate(180deg)';
+    }
+
+    
     function cookNext() {
       if (cookIdx < cookSteps.length - 1) { cookIdx++; renderCookStep(); }
       else closeCookMode();
