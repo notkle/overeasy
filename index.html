@@ -200,7 +200,7 @@
     @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     /* card flip */
     .step-card { perspective: 1000px; }
-    .step-card-inner, #cook-card-inner { position: relative; transform-style: preserve-3d; transition: transform 0.45s ease; min-height: 120px; }
+    .step-card-inner, #cook-card-inner { position: relative; transform-style: preserve-3d; transition: transform 0.45s ease; }
     .step-card-inner.flipped, #cook-card-inner.flipped { transform: rotateY(180deg); }
     .step-card-front, .step-card-back {
       backface-visibility: hidden;
@@ -403,7 +403,7 @@
 
   <!-- cook mode overlay -->
   <div id="cook-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:300;max-width:430px;margin:0 auto;flex-direction:column;">
-    <div id="cook-body" onclick="cookBodyTap(event)" style="flex:1;padding:calc(16px + var(--safe-top)) 20px 12px;display:flex;flex-direction:column;justify-content:flex-start;cursor:pointer;overflow-y:auto;min-height:0;"></div>
+    <div id="cook-body" onclick="cookBodyTap(event)" style="flex:1;padding:calc(20px + var(--safe-top)) 24px 16px;display:flex;flex-direction:column;justify-content:flex-start;cursor:pointer;overflow-y:auto;min-height:0;"></div>
     <div id="cook-drawers" style="flex-shrink:0;"></div>
     <div style="padding:10px 28px calc(14px + var(--safe-bottom));flex-shrink:0;border-top:0.5px solid var(--border);">
       <div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px;" id="cook-step-label">step 1 of 1</div>
@@ -529,6 +529,8 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
         if (!res.ok || data.error) { err('worker error', data); throw new Error(data.error || 'worker error'); }
         log('RECIPE RECEIVED — title: ' + data.recipe?.title);
         log('STEP COUNT: ' + (data.recipe?.steps?.length || 0));
+        log('IMAGE IN RECIPE: ' + (data.recipe?.image ? data.recipe.image.slice(0,80) : '(none)'));
+        log('FULL RECIPE KEYS: ' + Object.keys(data.recipe || {}).join(', '));
         renderRecipe(data.recipe, data.source);
       } catch (e) {
         err('catch:', e.message);
@@ -564,6 +566,9 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
 
     function renderRecipe(data, source) {
       const image = data.image || '';
+      log('IMAGE VALUE: ' + (image ? image.slice(0,80) : '(empty)'));
+      log('DATA KEYS: ' + Object.keys(data).join(', '));
+      if (data.recipe) log('RECIPE KEYS: ' + Object.keys(data.recipe).join(', '));
       currentRecipe = data;
       const topEl = document.getElementById('recipe-top');
 
@@ -997,7 +1002,7 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
 
       document.getElementById('cook-body').innerHTML =
         // front face
-        '<div id="cook-card-inner" style="position:relative;transform-style:preserve-3d;transition:transform 0.45s ease;min-height:200px;">' +
+        '<div id="cook-card-inner" style="position:relative;transform-style:preserve-3d;transition:transform 0.45s ease;">' +
           // front
           '<div style="backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:0.5px solid var(--border);border-radius:18px;overflow:hidden;">' +
             '<div style="padding:15px 17px;">' +
