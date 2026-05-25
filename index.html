@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#1A1814" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -31,7 +31,7 @@
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-    html, body { height: 100%; max-height: 100%; overflow: hidden; position: fixed; width: 100%; background: var(--bg); color: var(--shell); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    html, body { height: 100%; max-height: 100%; overflow: hidden; position: fixed; width: 100%; background: var(--bg); color: var(--shell); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; touch-action: pan-x pan-y; -ms-touch-action: pan-x pan-y; }
     .app { width: 100%; max-width: 430px; margin: 0 auto; height: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
     /* header */
@@ -44,7 +44,7 @@
     .screen.active { display: flex; }
 
     /* home */
-    .home-hero { padding: 40px 24px 28px; text-align: center; animation: fadeUp 0.4s ease both; }
+    .home-hero { padding: 16px 24px 16px; text-align: center; animation: fadeUp 0.4s ease both; }
     .home-hero h1 { font-family: 'Fraunces', serif; font-weight: 300; font-size: 32px; line-height: 1.18; margin-bottom: 10px; color: var(--shell); }
     .home-hero h1 em { font-style: italic; color: var(--yolk); }
     .home-hero p { font-size: 14px; color: var(--muted); line-height: 1.65; }
@@ -265,7 +265,7 @@
     .nav-btn.active i, .nav-btn.active span { color: var(--yolk); }
 
     /* shopping list */
-    .shop-header { padding: 20px 20px 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .shop-header { padding: calc(20px + var(--safe-top)) 20px 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .shop-header h2 { font-family: "Fraunces", serif; font-weight: 300; font-size: 24px; color: var(--shell); }
     .shop-clear { background: none; border: 0.5px solid var(--border-med); border-radius: 8px; color: var(--muted); font-family: "DM Sans", sans-serif; font-size: 12px; padding: 6px 12px; cursor: pointer; }
     .shop-empty { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; line-height: 1.7; }
@@ -354,16 +354,12 @@
     <div class="screen" id="recipe-screen">
       <div id="recipe-top"></div>
       <div id="source-pill-wrap"></div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--measure)"></div>measurement</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--timer)"></div>time</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--sensory)"></div>sensory cue</div>
-      </div>
+
       <div class="section-label" style="padding-top:4px">ingredients</div>
       <div class="ingredients-bar">
-        <div class="ing-header" id="ing-header" onclick="toggleIngredients()">
-          <span>show ingredients</span>
-          <i class="ti ti-chevron-down"></i>
+        <div class="ing-header" id="ing-header">
+          <span onclick="toggleIngredients()" style="cursor:pointer;flex:1;padding:4px 0;">hide ingredients</span>
+          <i class="ti ti-chevron-down" onclick="toggleIngredients()" style="cursor:pointer;padding:4px;"></i>
         </div>
         <div class="ing-list" id="ing-list"></div>
       </div>
@@ -407,11 +403,7 @@
 
   <!-- cook mode overlay -->
   <div id="cook-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:300;max-width:430px;margin:0 auto;flex-direction:column;">
-    <div style="padding:calc(14px + var(--safe-top)) 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);flex-shrink:0;">
-      <div style="font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);" id="cook-step-label">step 1 of 8</div>
-      <button onclick="closeCookMode()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-family:sans-serif;display:flex;align-items:center;gap:4px;"><i class="ti ti-x" style="font-size:16px"></i></button>
-    </div>
-    <div id="cook-body" onclick="cookBodyTap(event)" style="flex:1;padding:32px 28px 20px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;overflow-y:auto;min-height:0;"></div>
+    <div id="cook-body" onclick="cookBodyTap(event)" style="flex:1;padding:calc(16px + var(--safe-top)) 20px 12px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;overflow-y:auto;min-height:0;"></div>
     <div id="cook-drawers" style="flex-shrink:0;"></div>
     <div style="padding:16px 28px calc(16px + var(--safe-bottom));display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);flex-shrink:0;">
       <button onclick="cookPrev()" id="cook-prev" style="background:var(--card);border:0.5px solid var(--border);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:20px;"><i class="ti ti-arrow-left"></i></button>
@@ -573,9 +565,6 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
           <div class="recipe-banner">
             <img src="${image}" alt="${data.title||''}" onerror="this.parentElement.style.display='none'" />
             <div class="recipe-banner-overlay"></div>
-            <button class="recipe-banner-back" onclick="goHome()">
-              <i class="ti ti-arrow-left"></i> back
-            </button>
             <div class="recipe-banner-content">
               <div class="recipe-title">${data.title||'untitled recipe'}</div>
               <div class="recipe-meta" id="recipe-meta"></div>
@@ -584,10 +573,7 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
       } else {
         topEl.innerHTML = `
           <div class="recipe-header-plain">
-            <button class="recipe-back-plain" onclick="goHome()">
-              <i class="ti ti-arrow-left"></i> back
-            </button>
-            <div class="recipe-title-plain">${data.title||'untitled recipe'}</div>
+            <div class="recipe-title-plain" style="padding-top:8px">${data.title||'untitled recipe'}</div>
             <div class="recipe-meta-plain" id="recipe-meta"></div>
           </div>`;
       }
@@ -619,14 +605,16 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
 
       const ingHeader = document.getElementById('ing-header');
       ingHeader.classList.add('open');
+      document.getElementById('ing-list').style.display = 'block';
       ingHeader.querySelector('span').textContent = 'hide ingredients';
+      ingHeader.querySelector('i').style.transform = 'rotate(180deg)';
       document.getElementById('ing-list').classList.add('open');
 
       const steps = data.steps || [];
       const allIngredients = data.ingredients || [];
 
       document.getElementById('steps-list').innerHTML = steps.map((step, idx) => {
-        const tags = (step.tags||[]).map(t => `<span class="step-tag ${t.type}">${t.label}</span>`).join('');
+        const tags = '';
         const dot = step.hasDepth ? `<span class="depth-dot"></span>` : '';
 
         // extract only the orange measure-tagged words from this step's brief
@@ -653,8 +641,8 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
             <div class="step-card-front">
               <div class="step-main">
                 <div class="step-num">
-                  <button class="flip-btn" style="width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);flex-shrink:0;" onclick="flipCard(${idx})" aria-label="show measurements">
-                    <i class="ti ti-scale" style="font-size:14px;color:var(--measure)"></i>
+                  <button class="flip-btn" style="width:40px;height:40px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);flex-shrink:0;" onclick="flipCard(${idx})" aria-label="show measurements">
+                    <i class="ti ti-scale" style="font-size:20px;color:var(--measure)"></i>
                   </button>
                   <span style="margin-left:auto">step ${idx+1} of ${steps.length}${dot}</span>
                 </div>
@@ -669,8 +657,7 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
             </div>
             <div class="step-card-back">
               <div class="back-title">
-                <button class="flip-btn" style="width:24px;height:24px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);" onclick="flipCard(${idx})"><i class="ti ti-x" style="font-size:12px;color:var(--muted)"></i></button>
-                <span style="margin-left:8px">this step</span>
+                <button class="flip-btn" style="width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);" onclick="flipCard(${idx})"><i class="ti ti-x" style="font-size:15px;color:var(--muted)"></i></button>
               </div>
               ${ingRows}
             </div>
@@ -694,11 +681,13 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
     }
 
     function toggleIngredients() {
-      const hdr = document.getElementById('ing-header');
       const list = document.getElementById('ing-list');
-      hdr.classList.toggle('open');
+      const span = document.getElementById('ing-header').querySelector('span');
+      const chevron = document.getElementById('ing-header').querySelector('i');
+      const isOpen = list.classList.contains('open');
       list.classList.toggle('open');
-      hdr.querySelector('span').textContent = hdr.classList.contains('open') ? 'hide ingredients' : 'show ingredients';
+      span.textContent = isOpen ? 'show ingredients' : 'hide ingredients';
+      chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
     }
 
     function goHome() {
@@ -974,11 +963,9 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
         function renderCookStep() {
       const step = cookSteps[cookIdx];
       const total = cookSteps.length;
-      document.getElementById('cook-step-label').textContent = 'step ' + (cookIdx + 1) + ' of ' + total;
+      // step label removed from header
 
-      const tags = (step.tags || []).map(t =>
-        '<span class="step-tag ' + t.type + '" style="font-size:12px;padding:5px 11px">' + t.label + '</span>'
-      ).join('');
+      const tags = '';
 
       // extract only orange measure-tagged words from step brief
       const cookMeasureMatches = [...(step.brief||'').matchAll(/<span class="measure">([^<]+)<\/span>/g)];
@@ -1010,7 +997,7 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
             '<div style="padding:15px 17px;">' +
               '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;">' +
                 (stepIngs.length > 0
-                  ? '<button onclick="event.stopPropagation();toggleCookFlip()" style="width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;flex-shrink:0;"><i class=\"ti ti-scale\" style=\"font-size:14px;color:var(--measure)\"></i></button>'
+                  ? '<button onclick="event.stopPropagation();toggleCookFlip()" style="width:40px;height:40px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;flex-shrink:0;"><i class=\"ti ti-scale\" style=\"font-size:20px;color:var(--measure)\"></i></button>'
                   : '') +
                 '<span style="margin-left:auto">step ' + (cookIdx+1) + ' of ' + total + '</span>' +
               '</div>' +
@@ -1028,8 +1015,7 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
           (stepIngs.length > 0
             ? '<div style="position:absolute;inset:0;transform:rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:0.5px solid var(--border);border-radius:18px;padding:15px 17px;overflow-y:auto;">' +
                 '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;">' +
-                  '<button onclick="event.stopPropagation();toggleCookFlip()" style="width:24px;height:24px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;flex-shrink:0;"><i class=\"ti ti-x\" style=\"font-size:12px;color:var(--muted)\"></i></button>' +
-                  '<span>this step</span>' +
+                  '<button onclick="event.stopPropagation();toggleCookFlip()" style="width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;flex-shrink:0;"><i class=\"ti ti-x\" style=\"font-size:15px;color:var(--muted)\"></i></button>' +
                 '</div>' +
                 cookIngRows +
               '</div>'
@@ -1051,6 +1037,9 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
 
     function cookBodyTap(e) {
       if (e.target.closest('button')) return;
+      // don't advance if flipped to back
+      const inner = document.getElementById('cook-card-inner');
+      if (inner && inner.classList.contains('flipped')) return;
       cookNext();
     }
 
