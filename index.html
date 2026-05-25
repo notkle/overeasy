@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/tabler-icons.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     :root {
@@ -337,7 +337,7 @@
       <div class="paste-box">
         <textarea id="recipe-input" placeholder="paste your recipe here...&#10;&#10;title, ingredients, steps — any format is fine." rows="10" spellcheck="false"></textarea>
         <button class="go-btn" id="go-btn" onclick="handlePaste()">
-          <i class="ti ti-wand"></i> make it easy
+          <i class="ti ti-sparkles"></i> make it easy
         </button>
       </div>
       <div class="error-msg" id="error-msg"></div>
@@ -373,7 +373,7 @@
     <!-- nav bar -->
     <div class="nav-bar" id="nav-bar">
       <button class="nav-btn active" id="nav-home" onclick="showTab('home')">
-        <i class="ti ti-home" aria-hidden="true"></i>
+        <i class="ti ti-chef-hat" aria-hidden="true"></i>
         <span>recipes</span>
       </button>
       <button class="nav-btn" id="nav-saved" onclick="showTab('saved')">
@@ -636,25 +636,22 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
         const tags = (step.tags||[]).map(t => `<span class="step-tag ${t.type}">${t.label}</span>`).join('');
         const dot = step.hasDepth ? `<span class="depth-dot"></span>` : '';
 
-        // match ingredients for this step
-        // strategy: extract meaningful words from step text, check if ANY word
-        // from the ingredient name appears in the step text — prefers recall over precision
-        const stepText = ((step.brief||'') + ' ' + (step.original||'')).toLowerCase().replace(/<[^>]+>/g,'');
-        // extract all meaningful words (3+ chars) from step text
-        const stepWords = stepText.split(/[\s,.()\/]+/).filter(w => w.length >= 3);
-        const stepIngs = allIngredients.filter(i => {
-          // normalize ingredient name: strip descriptors, keep core noun(s)
-          const name = i.name.toLowerCase()
-            .replace(/,.*$/, '')
-            .replace(/\(.*?\)/g, '')
-            .replace(/\b(fresh|dried|chopped|minced|sliced|diced|grated|shredded|cooked|uncooked|whole|large|small|medium|extra|lean|boneless|skinless|unsalted|salted|softened|melted|divided|optional|virgin|store-bought|instant|active|dry|granulated|powdered|packed|pure|light|dark|unbleached|all-purpose)\b/g, '')
-            .replace(/\s+/g, ' ').trim();
-          // get the meaningful words from the ingredient name
-          const ingWords = name.split(/\s+/).filter(w => w.length >= 3);
-          // match if ANY ingredient word appears in the step text words
-          return ingWords.some(w => stepWords.some(sw => sw.includes(w) || w.includes(sw)));
-        });
-        const ingRows = stepIngs.length > 0
+        // extract only the orange measure-tagged words from this step's brief
+        const measureMatches = [...(step.brief||'').matchAll(/<span class="measure">([^<]+)<\/span>/g)];
+        const measureText = measureMatches.map(m => m[1].toLowerCase()).join(' ');
+        const measureWords = measureText.split(/[\s,.()\/]+/).filter(w => w.length >= 3);
+        const stepIngs = measureWords.length > 0
+          ? allIngredients.filter(i => {
+              const name = i.name.toLowerCase()
+                .replace(/,.*$/, '')
+                .replace(/\(.*?\)/g, '')
+                .replace(/\b(fresh|dried|chopped|minced|sliced|diced|grated|shredded|cooked|uncooked|whole|large|small|medium|extra|lean|boneless|skinless|unsalted|salted|softened|melted|divided|optional|virgin|store-bought|instant|active|dry|granulated|powdered|packed|pure|light|dark|unbleached|all-purpose)\b/g, '')
+                .replace(/\s+/g, ' ').trim();
+              const ingWords = name.split(/\s+/).filter(w => w.length >= 3);
+              return ingWords.some(w => measureWords.some(mw => mw.includes(w) || w.includes(mw)));
+            })
+          : [];
+                const ingRows = stepIngs.length > 0
           ? stepIngs.map(i => `<div class="back-ing"><span class="back-qty">${i.qty||''}</span><span>${i.name||''}</span></div>`).join('')
           : `<div style="font-size:13px;color:var(--muted);padding:8px 0">no specific ingredients listed for this step</div>`;
 
@@ -664,8 +661,8 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
               <div class="step-main">
                 <div class="step-num">
                   step ${idx+1} of ${steps.length}${dot}
-                  <button class="flip-btn" style="margin-left:auto" onclick="flipCard(${idx})">
-                    <span class="logo-mini">oe</span> recipe
+                  <button class="flip-btn" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);" onclick="flipCard(${idx})" aria-label="show measurements">
+                    <i class="ti ti-scale" style="font-size:14px;color:var(--measure)"></i>
                   </button>
                 </div>
                 <div class="step-brief">${step.brief||''}</div>
@@ -998,10 +995,11 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
         '<span class="step-tag ' + t.type + '" style="font-size:12px;padding:5px 11px">' + t.label + '</span>'
       ).join('');
 
-      // match ingredients for this step
-      const stepText = ((step.brief||'') + ' ' + (step.original||'')).toLowerCase().replace(/<[^>]+>/g,'');
-      const stepWords = stepText.split(/[\s,.()\/]+/).filter(w => w.length >= 3);
-      const stepIngs = currentRecipe && currentRecipe.ingredients
+      // extract only orange measure-tagged words from step brief
+      const cookMeasureMatches = [...(step.brief||'').matchAll(/<span class="measure">([^<]+)<\/span>/g)];
+      const cookMeasureText = cookMeasureMatches.map(m => m[1].toLowerCase()).join(' ');
+      const cookMeasureWords = cookMeasureText.split(/[\s,.()\/]+/).filter(w => w.length >= 3);
+      const stepIngs = cookMeasureWords.length > 0 && currentRecipe && currentRecipe.ingredients
         ? currentRecipe.ingredients.filter(i => {
             const name = i.name.toLowerCase()
               .replace(/,.*$/, '')
@@ -1009,45 +1007,53 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
               .replace(/\b(fresh|dried|chopped|minced|sliced|diced|grated|shredded|cooked|uncooked|whole|large|small|medium|extra|lean|boneless|skinless|unsalted|salted|softened|melted|divided|optional|virgin|store-bought|instant|active|dry|granulated|powdered|packed|pure|light|dark|unbleached|all-purpose)\b/g,'')
               .replace(/\s+/g,' ').trim();
             const ingWords = name.split(/\s+/).filter(w => w.length >= 3);
-            return ingWords.some(w => stepWords.some(sw => sw.includes(w) || w.includes(sw)));
+            return ingWords.some(w => cookMeasureWords.some(mw => mw.includes(w) || w.includes(mw)));
           })
         : [];
-
-      // main body — step content, tap to advance
-      document.getElementById('cook-body').innerHTML =
-        '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;">' +
-          'step ' + (cookIdx+1) + ' of ' + total +
-          (stepIngs.length > 0
-            ? '<button onclick="event.stopPropagation();toggleCookMeasure()" id="cook-measure-btn" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;"><i class=\"ti ti-list\" style=\"font-size:14px;color:var(--measure)\"></i></button>'
-            : '') +
-        '</div>' +
-        '<div style="font-size:22px;line-height:1.55;color:var(--shell);">' + (step.brief||'') + '</div>' +
-        (tags ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:24px;">' + tags + '</div>' : '') +
-        '<div style="margin-top:28px;font-size:12px;color:var(--muted);text-align:center;">tap to advance</div>';
-
-      // drawers — original notes + ingredients (same pattern as cards)
-      const ingRows = stepIngs.map(i =>
-        '<div style="display:flex;gap:10px;font-size:13px;padding:6px 0;border-bottom:0.5px solid var(--border);">' +
+            // build cook card as flip structure
+      const cookIngRows = stepIngs.map(i =>
+        '<div style="display:flex;gap:10px;font-size:14px;padding:6px 0;border-bottom:0.5px solid var(--border);">' +
         '<span style="color:var(--measure);font-weight:500;min-width:80px;flex-shrink:0">' + (i.qty||'') + '</span>' +
         '<span style="color:var(--shell)">' + i.name + '</span></div>'
       ).join('');
 
-      document.getElementById('cook-drawers').innerHTML =
-        // measure drawer
-        (stepIngs.length > 0
-          ? '<div id="cook-measure-drawer" style="display:none;padding:12px 28px 14px;border-top:0.5px solid var(--border);background:var(--bg2);">' +
-            '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">this step</div>' +
-            ingRows + '</div>'
-          : '') +
-        // original notes drawer
-        '<button onclick="event.stopPropagation();toggleCookOriginal()" style="width:100%;background:var(--bg2);border:none;border-top:0.5px solid var(--border);padding:10px 28px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:DM Sans,sans-serif;font-size:12px;color:var(--muted);">' +
-          '<span>original notes</span><i class="ti ti-chevron-down" id="cook-orig-chevron" style="font-size:14px;transition:transform 0.2s"></i>' +
-        '</button>' +
-        '<div id="cook-orig-drawer" style="display:none;padding:13px 28px 15px;font-size:13px;line-height:1.72;color:var(--muted);background:var(--bg2);font-style:italic;border-top:0.5px solid var(--border);">' +
-          (step.original||'') +
-        '</div>';
+      document.getElementById('cook-body').innerHTML =
+        // front face
+        '<div id="cook-card-inner" style="position:relative;transform-style:preserve-3d;transition:transform 0.45s ease;min-height:200px;">' +
+          // front
+          '<div style="backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:0.5px solid var(--border);border-radius:18px;overflow:hidden;">' +
+            '<div style="padding:15px 17px;">' +
+              '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;">' +
+                'step ' + (cookIdx+1) + ' of ' + total +
+                (stepIngs.length > 0
+                  ? '<button onclick="event.stopPropagation();toggleCookFlip()" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;flex-shrink:0;"><i class=\"ti ti-scale\" style=\"font-size:14px;color:var(--measure)\"></i></button>'
+                  : '') +
+              '</div>' +
+              '<div style="font-size:22px;line-height:1.55;color:var(--shell);">' + (step.brief||'') + '</div>' +
+              (tags ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;">' + tags + '</div>' : '') +
+            '</div>' +
+            '<button onclick="event.stopPropagation();toggleCookOriginal()" style="width:100%;background:var(--bg2);border:none;border-top:0.5px solid var(--border);padding:10px 17px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:sans-serif;font-size:12px;color:var(--muted);">' +
+              '<span>original notes</span><i class="ti ti-chevron-down" id="cook-orig-chevron" style="font-size:14px;transition:transform 0.2s"></i>' +
+            '</button>' +
+            '<div id="cook-orig-drawer" style="display:none;padding:13px 17px 15px;font-size:13px;line-height:1.72;color:var(--muted);background:var(--bg2);font-style:italic;border-top:0.5px solid var(--border);">' +
+              (step.original||'') +
+            '</div>' +
+          '</div>' +
+          // back
+          (stepIngs.length > 0
+            ? '<div style="position:absolute;inset:0;transform:rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:0.5px solid var(--border);border-radius:18px;padding:15px 17px;overflow-y:auto;">' +
+                '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">' +
+                  '<span>this step</span>' +
+                  '<button onclick="event.stopPropagation();toggleCookFlip()" style="width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;"><i class=\"ti ti-x\" style=\"font-size:13px;color:var(--muted)\"></i></button>' +
+                '</div>' +
+                cookIngRows +
+              '</div>'
+            : '') +
+        '</div>' +
+        '<div style="margin-top:16px;font-size:12px;color:var(--muted);text-align:center;">tap to advance</div>';
 
-      // dots
+      // clear drawers div since we no longer use it
+      document.getElementById('cook-drawers').innerHTML = '';
       document.getElementById('cook-dots').innerHTML = cookSteps.map((_, i) =>
         '<div style="width:' + (i === cookIdx ? '18' : '6') + 'px;height:6px;border-radius:3px;background:' + (i === cookIdx ? 'var(--yolk)' : 'var(--border-med)') + ';transition:all 0.2s"></div>'
       ).join('');
@@ -1059,14 +1065,13 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
     }
 
     function cookBodyTap(e) {
-      // don't advance if tapping a button inside the body
       if (e.target.closest('button')) return;
       cookNext();
     }
 
-    function toggleCookMeasure() {
-      const drawer = document.getElementById('cook-measure-drawer');
-      if (drawer) drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+    function toggleCookFlip() {
+      const inner = document.getElementById('cook-card-inner');
+      if (inner) inner.classList.toggle('flipped');
     }
 
     function toggleCookOriginal() {
@@ -1078,7 +1083,6 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
       chevron.style.transform = open ? '' : 'rotate(180deg)';
     }
 
-    
     function cookNext() {
       if (cookIdx < cookSteps.length - 1) { cookIdx++; renderCookStep(); }
       else closeCookMode();
@@ -1101,7 +1105,6 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
         openShop();
       }
     }
-
   </script>
 </body>
 </html>
