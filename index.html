@@ -605,11 +605,11 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
         <button class="action-btn" onclick="startCookMode()">
           <i class="ti ti-player-play"></i> cook mode
         </button>
-        <button class="action-btn ${isSaved ? 'saved' : ''}" id="save-btn" onclick="toggleSave()">
-          <i class="ti ti-bookmark"></i> ${isSaved ? 'saved' : 'save'}
-        </button>
         <button class="action-btn" onclick="openShopFromRecipe()">
           <i class="ti ti-shopping-cart"></i> shop
+        </button>
+        <button class="action-btn ${isSaved ? 'saved' : ''}" id="save-btn" onclick="toggleSave()">
+          <i class="ti ti-bookmark"></i> ${isSaved ? 'saved' : 'save'}
         </button>
       </div>`;
 
@@ -1036,7 +1036,7 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
       if (stepIngs.length > 0) {
         measureBar.style.display = 'block';
         measureBar.innerHTML =
-          '<button onclick="toggleCookFlip()" style="width:100%;background:var(--bg2);border:0.5px solid var(--border-med);border-radius:20px;padding:5px 10px;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-family:sans-serif;font-size:10px;color:var(--measure);">' +
+          '<button onclick="toggleCookFlip()" style="width:100%;background:var(--bg2);border:0.5px solid var(--border-med);border-radius:20px;padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-family:sans-serif;font-size:10px;color:var(--measure);">' +
           '<i class="ti ti-scale" style="font-size:12px"></i> measure</button>';
       } else {
         measureBar.style.display = 'none';
@@ -1070,7 +1070,7 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
         const flipped = inner.classList.contains('flipped');
         bar.innerHTML = flipped
           ? '<button onclick="toggleCookFlip()" style="width:100%;background:var(--bg2);border:0.5px solid var(--border-med);border-radius:20px;padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:sans-serif;font-size:12px;color:var(--muted);"><i class=\"ti ti-x\" style=\"font-size:14px\"></i> close</button>'
-          : '<button onclick="toggleCookFlip()" style="width:100%;background:var(--bg2);border:0.5px solid var(--border-med);border-radius:20px;padding:5px 10px;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-family:sans-serif;font-size:10px;color:var(--measure);"><i class=\"ti ti-scale\" style=\"font-size:12px\"></i> measure</button>';
+          : '<button onclick="toggleCookFlip()" style="width:100%;background:var(--bg2);border:0.5px solid var(--border-med);border-radius:20px;padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-family:sans-serif;font-size:10px;color:var(--measure);"><i class=\"ti ti-scale\" style=\"font-size:12px\"></i> measure</button>';
       }
     }
 
