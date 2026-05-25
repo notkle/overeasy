@@ -31,8 +31,8 @@
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-    html, body { height: 100%; background: var(--bg); color: var(--shell); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
-    .app { max-width: 430px; margin: 0 auto; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+    html, body { height: 100%; max-height: 100%; overflow: hidden; position: fixed; width: 100%; background: var(--bg); color: var(--shell); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    .app { width: 100%; max-width: 430px; margin: 0 auto; height: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
     /* header */
     .header { padding: calc(14px + var(--safe-top)) 20px 14px; display: flex; align-items: center; justify-content: space-between; background: var(--bg); border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 100; }
@@ -171,7 +171,7 @@
     .ing-header i { font-size: 16px; color: var(--muted); transition: transform 0.22s ease; }
     .ing-header.open i { transform: rotate(180deg); }
     .ing-list { display: none; padding: 0 16px 14px; }
-    .ing-list.open { display: block; }
+    .ing-list.open { display: block !important; }
     .ing-item { display: flex; gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 0.5px solid var(--border); color: var(--shell); }
     .ing-item:last-child { border-bottom: none; }
     .ing-qty { color: var(--measure); font-weight: 500; min-width: 80px; flex-shrink: 0; }
@@ -653,10 +653,10 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
             <div class="step-card-front">
               <div class="step-main">
                 <div class="step-num">
-                  <button class="flip-btn" style="margin-right:8px;width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);flex-shrink:0;" onclick="flipCard(${idx})" aria-label="show measurements">
+                  <button class="flip-btn" style="width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);flex-shrink:0;" onclick="flipCard(${idx})" aria-label="show measurements">
                     <i class="ti ti-scale" style="font-size:14px;color:var(--measure)"></i>
                   </button>
-                  step ${idx+1} of ${steps.length}${dot}
+                  <span style="margin-left:auto">step ${idx+1} of ${steps.length}${dot}</span>
                 </div>
                 <div class="step-brief">${step.brief||''}</div>
                 ${tags ? `<div class="step-tags">${tags}</div>` : ''}
@@ -669,8 +669,8 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
             </div>
             <div class="step-card-back">
               <div class="back-title">
-                <span>this step</span>
-                <button class="flip-btn" onclick="flipCard(${idx})"><i class="ti ti-x" style="font-size:12px"></i> close</button>
+                <button class="flip-btn" style="width:24px;height:24px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);" onclick="flipCard(${idx})"><i class="ti ti-x" style="font-size:12px;color:var(--muted)"></i></button>
+                <span style="margin-left:8px">this step</span>
               </div>
               ${ingRows}
             </div>
@@ -1008,13 +1008,13 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
           // front
           '<div style="backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:0.5px solid var(--border);border-radius:18px;overflow:hidden;">' +
             '<div style="padding:15px 17px;">' +
-              '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;">' +
+              '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;">' +
                 (stepIngs.length > 0
                   ? '<button onclick="event.stopPropagation();toggleCookFlip()" style="width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;flex-shrink:0;"><i class=\"ti ti-scale\" style=\"font-size:14px;color:var(--measure)\"></i></button>'
                   : '') +
-                'step ' + (cookIdx+1) + ' of ' + total +
+                '<span style="margin-left:auto">step ' + (cookIdx+1) + ' of ' + total + '</span>' +
               '</div>' +
-              '<div style="font-size:22px;line-height:1.55;color:var(--shell);">' + (step.brief||'') + '</div>' +
+              '<div class="step-brief" style="font-size:22px;line-height:1.6;">' + (step.brief||'') + '</div>' +
               (tags ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;">' + tags + '</div>' : '') +
             '</div>' +
             '<button onclick="event.stopPropagation();toggleCookOriginal()" style="width:100%;background:var(--bg2);border:none;border-top:0.5px solid var(--border);padding:10px 17px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:sans-serif;font-size:12px;color:var(--muted);">' +
@@ -1027,9 +1027,9 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
           // back
           (stepIngs.length > 0
             ? '<div style="position:absolute;inset:0;transform:rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:0.5px solid var(--border);border-radius:18px;padding:15px 17px;overflow-y:auto;">' +
-                '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">' +
+                '<div style="font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;">' +
+                  '<button onclick="event.stopPropagation();toggleCookFlip()" style="width:24px;height:24px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;flex-shrink:0;"><i class=\"ti ti-x\" style=\"font-size:12px;color:var(--muted)\"></i></button>' +
                   '<span>this step</span>' +
-                  '<button onclick="event.stopPropagation();toggleCookFlip()" style="width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border-med);display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;"><i class=\"ti ti-x\" style=\"font-size:13px;color:var(--muted)\"></i></button>' +
                 '</div>' +
                 cookIngRows +
               '</div>'
@@ -1112,6 +1112,11 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
       } else if (tab === 'recipe') {
         document.getElementById('nav-home').classList.add('active');
         document.getElementById('recipe-screen').classList.add('active');
+        // ensure ing-list open state is preserved
+        const ingList = document.getElementById('ing-list');
+        if (ingList && ingList.classList.contains('open')) {
+          ingList.style.display = 'block';
+        }
       }
     }
   </script>
