@@ -49,14 +49,13 @@
     .home-hero h1 em { font-style: italic; color: var(--yolk); }
     .home-hero p { font-size: 14px; color: var(--muted); line-height: 1.65; }
 
-    .url-box { margin: 0 20px 10px; animation: fadeUp 0.4s 0.05s ease both; }
-    .url-input-wrap { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border-med); border-radius: 16px; padding: 11px 12px 11px 16px; transition: border-color 0.15s; }
-    .url-input-wrap:focus-within { border-color: var(--yolk); }
-    .url-input-wrap i { font-size: 18px; color: var(--muted); flex-shrink: 0; }
-    .url-input-wrap input { flex: 1; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--shell); background: transparent; min-width: 0; }
-    .url-input-wrap input::placeholder { color: var(--muted); }
-    .go-btn { background: var(--yolk); border: none; border-radius: 11px; color: #1A1814; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 9px 18px; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: background 0.15s, transform 0.1s; }
-    .go-btn:active { background: var(--yolk-dark); transform: scale(0.97); }
+    .paste-box { margin: 0 20px 10px; display: flex; flex-direction: column; gap: 10px; animation: fadeUp 0.4s 0.05s ease both; }
+    .paste-box textarea { width: 100%; background: var(--card); border: 1px solid var(--border-med); border-radius: 16px; padding: 14px 16px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--shell); resize: none; outline: none; line-height: 1.6; transition: border-color 0.15s; min-height: 180px; }
+    .paste-box textarea:focus { border-color: var(--yolk); }
+    .paste-box textarea::placeholder { color: var(--muted); }
+    .go-btn { width: 100%; background: var(--yolk); border: none; border-radius: 11px; color: #1A1814; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 13px 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background 0.15s, transform 0.1s; }
+    .go-btn i { font-size: 16px; }
+    .go-btn:active { background: var(--yolk-dark); transform: scale(0.98); }
     .go-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
     .error-msg { margin: 0 20px 10px; background: rgba(226,75,74,0.12); border: 0.5px solid rgba(226,75,74,0.3); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #F09595; display: none; line-height: 1.5; }
@@ -211,34 +210,15 @@
     <div class="screen active" id="home-screen">
       <div class="home-hero">
         <h1>recipes,<br><em>actually easy.</em></h1>
-        <p>paste a recipe url and we'll break it<br>down into clear, colorized steps.</p>
+        <p>paste any recipe below — we'll organize,<br>colorize, and simplify it instantly.</p>
       </div>
-      <div class="url-box">
-        <div class="url-input-wrap">
-          <i class="ti ti-link" aria-hidden="true"></i>
-          <input type="url" id="url-input" placeholder="paste recipe url..." autocomplete="off" autocorrect="off" spellcheck="false" />
-          <button class="go-btn" id="go-btn" onclick="handleUrl()">go</button>
-        </div>
+      <div class="paste-box">
+        <textarea id="recipe-input" placeholder="paste your recipe here...&#10;&#10;title, ingredients, steps — any format is fine." rows="10" spellcheck="false"></textarea>
+        <button class="go-btn" id="go-btn" onclick="handlePaste()">
+          <i class="ti ti-sparkles"></i> make it easy
+        </button>
       </div>
       <div class="error-msg" id="error-msg"></div>
-      <div class="divider"><span>or try a demo</span></div>
-      <div class="demo-cards">
-        <div class="demo-card" onclick="loadDemo('bread')">
-          <div class="demo-card-emoji">🍞</div>
-          <div class="demo-card-info"><strong>homemade sandwich bread</strong><span>Sally's Baking Addiction · demo</span></div>
-          <i class="ti ti-chevron-right"></i>
-        </div>
-        <div class="demo-card" onclick="loadDemo('pasta')">
-          <div class="demo-card-emoji">🍝</div>
-          <div class="demo-card-info"><strong>cacio e pepe</strong><span>Serious Eats · demo</span></div>
-          <i class="ti ti-chevron-right"></i>
-        </div>
-        <div class="demo-card" onclick="loadDemo('cookies')">
-          <div class="demo-card-emoji">🍪</div>
-          <div class="demo-card-info"><strong>chocolate chip cookies</strong><span>NYT Cooking · demo</span></div>
-          <i class="ti ti-chevron-right"></i>
-        </div>
-      </div>
     </div>
 
     <div class="loading-screen" id="loading-screen">
@@ -327,57 +307,6 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
   ]
 }`;
 
-    const DEMOS = {
-      bread: {
-        title: 'homemade sandwich bread', rating: '4.9', ratingCount: '2.4k', time: '2 hrs 30 min', yield: '1 loaf', source: 'demo',
-        image: 'https://sallysbakingaddiction.com/wp-content/uploads/2018/02/homemade-bread-5.jpg',
-        ingredients: [
-          { qty: '1 pkt (2¼ tsp)', name: 'active dry yeast' }, { qty: '1¼ cups', name: 'warm water (110°F)' },
-          { qty: '3 cups', name: 'all-purpose flour, plus more' }, { qty: '1½ tsp', name: 'salt' },
-          { qty: '2 tbsp', name: 'honey or sugar' }, { qty: '2 tbsp', name: 'unsalted butter, softened' },
-        ],
-        steps: [
-          { brief: 'Whisk together <span class="measure">1¼ cups warm water</span> and <span class="measure">2¼ tsp yeast</span>. Let sit <span class="timer">5–10 minutes</span> until <span class="sensory">foamy and fragrant</span>.', tags: [{type:'time',label:'10 min'},{type:'check',label:'foamy test'}], original: 'Whisk the warm water and yeast together in the bowl of your stand mixer. Cover and allow to sit for 5-10 minutes. The mixture should be frothy after 10 minutes. If not, start over with fresh yeast.', hasDepth: true },
-          { brief: 'Add <span class="measure">2 tbsp honey</span>, <span class="measure">2 tbsp butter</span>, and <span class="measure">1½ tsp salt</span>. Mix briefly on low.', tags: [], original: 'Add the honey, butter, and salt. Beat on low speed for 30 seconds to combine.', hasDepth: false },
-          { brief: 'Knead on medium <span class="timer">5 full minutes</span>. If sticky, add flour <span class="measure">1 tsp</span> at a time. Dough should <span class="sensory">slowly bounce back</span> when poked.', tags: [{type:'time',label:'5 min'},{type:'check',label:'poke test'}], original: 'Keep the dough in the mixer and beat for an additional 5 full minutes, or knead by hand on a lightly floured surface. If the dough becomes too sticky, sprinkle 1 teaspoon of flour at a time. After kneading, poke it — if it slowly bounces back, your dough is ready.', hasDepth: true },
-          { brief: 'Place in oiled bowl, cover. Rise in a warm spot <span class="timer">1–2 hours</span> until <span class="sensory">doubled in size</span>.', tags: [{type:'time',label:'1–2 hrs'},{type:'check',label:'double size'}], original: 'Lightly grease a large bowl. Place the dough in the bowl, turning to coat all sides. Cover and allow to rise at room temperature until double in size, about 1-2 hours.', hasDepth: false },
-          { brief: 'Bake at <span class="measure">350°F</span> for <span class="timer">30–35 minutes</span> until golden. Internal temp <span class="measure">195–200°F</span>. Tap bottom — should sound <span class="sensory">hollow</span>.', tags: [{type:'temp',label:'350°F'},{type:'time',label:'30–35 min'},{type:'check',label:'hollow tap'}], original: 'Bake for 30-35 minutes at 350°F until golden brown. Tap the bottom — it should sound hollow. Done when center reads 195-200°F. Cool in pan 10 minutes, then on a wire rack.', hasDepth: true },
-        ]
-      },
-      pasta: {
-        title: 'cacio e pepe', rating: '4.8', ratingCount: '891', time: '25 min', yield: '2 servings', source: 'demo',
-        image: '',
-        ingredients: [
-          { qty: '200g', name: 'spaghetti or tonnarelli' }, { qty: '2 tsp', name: 'whole black peppercorns' },
-          { qty: '2 oz (57g)', name: 'Pecorino Romano, finely grated' }, { qty: '1 oz (28g)', name: 'Parmesan, finely grated' },
-        ],
-        steps: [
-          { brief: 'Toast <span class="measure">2 tsp peppercorns</span> in a dry skillet <span class="timer">1–2 minutes</span> until <span class="sensory">fragrant and slightly smoking</span>. Crush coarsely.', tags: [{type:'time',label:'2 min'}], original: 'Add whole peppercorns to a large, dry skillet over medium heat. Toast, tossing frequently, until fragrant and wisps of smoke appear, 1 to 2 minutes. Crush into a coarse grind — not powder.', hasDepth: true },
-          { brief: 'Cook pasta in lightly salted water. Pull <span class="timer">2 minutes</span> before al dente. Reserve <span class="measure">1½ cups</span> pasta water before draining.', tags: [{type:'check',label:'save pasta water'}], original: 'Bring a large pot of water to a boil. Use about half as much salt as usual. Cook pasta until 2 minutes shy of al dente. Reserve at least 1½ cups of starchy pasta water before draining.', hasDepth: true },
-          { brief: 'Mix grated cheeses with <span class="measure">¼ cup</span> warm pasta water into a <span class="sensory">smooth, paste-like</span> slurry.', tags: [{type:'check',label:'smooth paste'}], original: 'Combine the finely grated Pecorino and Parmesan. Add about ¼ cup of the hot pasta water and work until it forms a smooth, thick paste. Cheese must be grated very finely.', hasDepth: true },
-          { brief: 'Remove pan from heat. Add cheese paste, tossing rapidly. Add pasta water <span class="measure">1–2 tbsp</span> at a time until sauce is <span class="sensory">glossy and clings</span> to each strand.', tags: [{type:'check',label:'glossy sauce'}], original: 'Remove the pan from the heat entirely. Add the cheese paste and toss furiously, adding pasta water a little at a time. Keep tossing until a glossy sauce clings to every strand.', hasDepth: true },
-        ]
-      },
-      cookies: {
-        title: 'chocolate chip cookies', rating: '5.0', ratingCount: '3.1k', time: '45 min', yield: '24 cookies', source: 'demo',
-        image: '',
-        ingredients: [
-          { qty: '2¼ cups', name: 'all-purpose flour' }, { qty: '1 tsp', name: 'baking soda' },
-          { qty: '1 tsp', name: 'kosher salt' }, { qty: '1 cup (2 sticks)', name: 'unsalted butter, softened' },
-          { qty: '¾ cup', name: 'granulated sugar' }, { qty: '¾ cup', name: 'packed brown sugar' },
-          { qty: '2 large', name: 'eggs, room temp' }, { qty: '2 tsp', name: 'pure vanilla extract' },
-          { qty: '2 cups', name: 'chocolate chips' },
-        ],
-        steps: [
-          { brief: 'Whisk <span class="measure">2¼ cups flour</span>, <span class="measure">1 tsp baking soda</span>, <span class="measure">1 tsp salt</span>. Set aside. Preheat oven to <span class="measure">375°F</span>.', tags: [{type:'temp',label:'375°F'}], original: 'Preheat oven to 375°F. Stir together the flour, baking soda, and salt in a small bowl. Set aside.', hasDepth: false },
-          { brief: 'Beat <span class="measure">1 cup butter</span> and both sugars <span class="timer">3–4 minutes</span> until <span class="sensory">light, fluffy, and pale</span>.', tags: [{type:'time',label:'3–4 min'},{type:'check',label:'pale & fluffy'}], original: 'Beat butter and both sugars together on medium-high until very light and fluffy, about 3-4 minutes.', hasDepth: true },
-          { brief: 'Add <span class="measure">2 eggs</span> one at a time, beating after each. Add <span class="measure">2 tsp vanilla</span>. Scrape bowl.', tags: [], original: 'Add eggs one at a time, beating well after each. Add vanilla. Scrape down sides and bottom of bowl.', hasDepth: false },
-          { brief: 'Add flour mixture on low until <span class="sensory">just combined</span>. Fold in <span class="measure">2 cups</span> chocolate chips by hand.', tags: [{type:'check',label:"don't overmix"}], original: 'Add flour mixture all at once on lowest speed until just combined. Fold in chips by hand.', hasDepth: true },
-          { brief: 'Scoop <span class="measure">1½ tbsp</span> balls <span class="measure">2 inches</span> apart. Bake <span class="timer">9–11 minutes</span> until edges are golden.', tags: [{type:'temp',label:'375°F'},{type:'time',label:'9–11 min'}], original: 'Drop rounded tablespoons of dough 2 inches apart on baking sheets. Bake 9-11 minutes until golden.', hasDepth: true },
-          { brief: 'Cool on sheet <span class="timer">5 minutes</span> — will look <span class="sensory">underdone but firm up</span>. Transfer to rack.', tags: [{type:'time',label:'5 min'},{type:'check',label:'carryover baking'}], original: 'Cool on baking sheets 5 minutes before removing. They will look underdone — intentional. They firm up to perfect chewy texture as they cool.', hasDepth: true },
-        ]
-      }
-    };
 
     const log = (msg, data, color='#F2A61D') => data !== undefined
       ? console.log('%c[overeasy] ' + msg, `color:${color};font-weight:bold`, data)
@@ -386,19 +315,18 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
       ? console.error('%c[overeasy ERROR] ' + msg, 'color:red;font-weight:bold', data)
       : console.error('%c[overeasy ERROR] ' + msg, 'color:red;font-weight:bold');
 
-    async function handleUrl() {
-      const url = document.getElementById('url-input').value.trim();
-      if (!url) return;
-      if (!url.startsWith('http')) { showError('please enter a full url starting with https://'); return; }
+    async function handlePaste() {
+      const text = document.getElementById('recipe-input').value.trim();
+      if (!text) { showError('paste a recipe first'); return; }
       hideError();
       document.getElementById('go-btn').disabled = true;
-      showLoading('fetching recipe...', 'this usually takes 10–15 seconds');
-      log('sending to worker: ' + url);
+      showLoading('making it easy...', 'usually takes 10–15 seconds');
+      log('sending pasted text to worker');
       try {
         const res = await fetch(WORKER, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, prompt: PROMPT })
+          body: JSON.stringify({ text, prompt: PROMPT })
         });
         log('worker status: ' + res.status);
         const rawText = await res.text();
@@ -412,15 +340,9 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
       } catch (e) {
         err('catch:', e.message);
         hideLoading();
-        showError('couldn\'t load that recipe — check the url and try again. (' + e.message + ')');
+        showError('something went wrong — (' + e.message + ')');
         document.getElementById('go-btn').disabled = false;
       }
-    }
-
-    function loadDemo(key) {
-      hideError();
-      showLoading('loading demo...', '');
-      setTimeout(() => renderRecipe(DEMOS[key], 'demo'), 700);
     }
 
     function showLoading(msg, sub) {
@@ -482,9 +404,7 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
       if (metaEl) metaEl.innerHTML = meta;
 
       const pillWrap = document.getElementById('source-pill-wrap');
-      if (source === 'schema') pillWrap.innerHTML = `<span class="source-pill schema"><i class="ti ti-check"></i> structured data extracted</span>`;
-      else if (source === 'jina') pillWrap.innerHTML = `<span class="source-pill jina"><i class="ti ti-world"></i> extracted via page reader</span>`;
-      else pillWrap.innerHTML = '';
+      pillWrap.innerHTML = '';
 
       document.getElementById('ing-list').innerHTML = (data.ingredients || []).map(i =>
         `<div class="ing-item"><span class="ing-qty">${i.qty||''}</span><span>${i.name||''}</span></div>`
@@ -538,7 +458,7 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
       hideError();
     }
 
-    document.getElementById('url-input').addEventListener('keydown', e => { if (e.key === 'Enter') handleUrl(); });
+
   </script>
 </body>
 </html>
