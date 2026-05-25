@@ -198,6 +198,51 @@
     .step-original.open { display: block; }
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* nav bar */
+    .nav-bar { display: flex; align-items: center; justify-content: space-around; padding: 10px 0 calc(10px + var(--safe-bottom)); background: var(--bg); border-top: 0.5px solid var(--border); position: sticky; bottom: 0; z-index: 100; }
+    .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 4px 16px; font-family: "DM Sans", sans-serif; }
+    .nav-btn i { font-size: 22px; color: var(--muted); transition: color 0.15s; }
+    .nav-btn span { font-size: 10px; color: var(--muted); transition: color 0.15s; }
+    .nav-btn.active i, .nav-btn.active span { color: var(--yolk); }
+
+    /* shopping list */
+    .shop-header { padding: 20px 20px 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .shop-header h2 { font-family: "Fraunces", serif; font-weight: 300; font-size: 24px; color: var(--shell); }
+    .shop-clear { background: none; border: 0.5px solid var(--border-med); border-radius: 8px; color: var(--muted); font-family: "DM Sans", sans-serif; font-size: 12px; padding: 6px 12px; cursor: pointer; }
+    .shop-empty { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .shop-empty i { font-size: 36px; display: block; margin-bottom: 12px; color: var(--border-med); }
+    .aisle-group { margin: 0 20px 20px; }
+    .aisle-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .aisle-label::after { content: ""; flex: 1; height: 0.5px; background: var(--border); }
+    .shop-item { display: flex; align-items: center; gap: 12px; background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: opacity 0.2s; }
+    .shop-item.checked { opacity: 0.35; }
+    .shop-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border-med); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; }
+    .shop-item.checked .shop-check { background: var(--yolk); border-color: var(--yolk); }
+    .shop-item.checked .shop-check::after { content: ""; width: 5px; height: 9px; border: 2px solid #1A1814; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); display: block; }
+    .shop-item-name { font-size: 14px; color: var(--shell); flex: 1; }
+    .shop-item.checked .shop-item-name { text-decoration: line-through; color: var(--muted); }
+    .shop-add-btn { display: flex; align-items: center; gap: 6px; background: none; border: 0.5px dashed var(--border-med); border-radius: 12px; color: var(--muted); font-family: "DM Sans", sans-serif; font-size: 13px; padding: 10px 14px; cursor: pointer; margin: 0 20px 12px; width: calc(100% - 40px); justify-content: center; }
+
+    /* saved recipes */
+    .saved-header { padding: 20px 20px 16px; }
+    .saved-header h2 { font-family: "Fraunces", serif; font-weight: 300; font-size: 24px; color: var(--shell); }
+    .saved-empty { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .saved-empty i { font-size: 36px; display: block; margin-bottom: 12px; color: var(--border-med); }
+    .saved-cards { display: flex; flex-direction: column; gap: 10px; padding: 0 20px; padding-bottom: calc(28px + var(--safe-bottom)); }
+    .saved-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.15s; }
+    .saved-card:active { border-color: var(--yolk); }
+    .saved-card-info { flex: 1; min-width: 0; }
+    .saved-card-info strong { font-size: 14px; font-weight: 500; color: var(--shell); display: block; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .saved-card-info span { font-size: 12px; color: var(--muted); }
+    .saved-card-del { background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px; font-size: 18px; flex-shrink: 0; }
+
+    /* recipe action bar */
+    .recipe-actions { display: flex; gap: 8px; padding: 12px 20px 0; }
+    .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; color: var(--muted); font-family: "DM Sans", sans-serif; font-size: 12px; font-weight: 500; padding: 10px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+    .action-btn:active { border-color: var(--yolk); color: var(--yolk); }
+    .action-btn i { font-size: 15px; }
+    .action-btn.saved { border-color: var(--yolk); color: var(--yolk); }
+
   </style>
 </head>
 <body>
@@ -248,6 +293,44 @@
       <div class="section-label">steps</div>
       <div class="steps-list" id="steps-list"></div>
     </div>
+    <!-- nav bar -->
+    <div class="nav-bar" id="nav-bar">
+      <button class="nav-btn active" id="nav-home" onclick="showTab('home')">
+        <i class="ti ti-chef-hat" aria-hidden="true"></i>
+        <span>recipes</span>
+      </button>
+      <button class="nav-btn" id="nav-saved" onclick="showTab('saved')">
+        <i class="ti ti-bookmark" aria-hidden="true"></i>
+        <span>saved</span>
+      </button>
+      <button class="nav-btn" id="nav-shop" onclick="showTab('shop')">
+        <i class="ti ti-shopping-cart" aria-hidden="true"></i>
+        <span>shopping</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- shopping list screen (outside .app so it overlays full screen) -->
+  <div id="shop-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+    <div style="padding:calc(14px + var(--safe-top)) 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10;">
+      <div class="logo">over<span>easy</span></div>
+      <button onclick="closeShop()" style="background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="ti ti-x" style="font-size:16px"></i></button>
+    </div>
+    <div class="shop-header">
+      <h2>shopping list</h2>
+      <button class="shop-clear" onclick="clearChecked()">remove checked</button>
+    </div>
+    <div id="shop-content"></div>
+  </div>
+
+  <!-- saved recipes screen (outside .app so it overlays full screen) -->
+  <div id="saved-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+    <div style="padding:calc(14px + var(--safe-top)) 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10;">
+      <div class="logo">over<span>easy</span></div>
+      <button onclick="closeSaved()" style="background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="ti ti-x" style="font-size:16px"></i></button>
+    </div>
+    <div class="saved-header"><h2>saved recipes</h2></div>
+    <div class="saved-cards" id="saved-cards"></div>
   </div>
 
   <script>
@@ -394,6 +477,7 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
 
     function renderRecipe(data, source) {
       const image = data.image || '';
+      currentRecipe = data;
       const topEl = document.getElementById('recipe-top');
 
       if (image) {
@@ -482,6 +566,265 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
       hideError();
     }
 
+
+
+    // ── current recipe ───────────────────────────────────────────────────────
+    let currentRecipe = null;
+
+    // ── aisle lookup ─────────────────────────────────────────────────────────
+    const AISLE_MAP = {
+      // Produce
+      garlic:1, onion:1, shallot:1, scallion:1, "green onion":1, tomato:1, lemon:1, lime:1, orange:1,
+      spinach:1, basil:1, parsley:1, cilantro:1, thyme:1, rosemary:1, sage:1, oregano:1, mint:1,
+      potato:1, "sweet potato":1, carrot:1, celery:1, mushroom:1, pepper:1, zucchini:1, eggplant:1,
+      broccoli:1, cauliflower:1, kale:1, lettuce:1, arugula:1, avocado:1, cucumber:1, corn:1,
+      ginger:1, jalapeño:1, jalapeño:1, apple:1, banana:1, berry:1, strawberry:1, blueberry:1,
+      // Dairy
+      butter:2, milk:2, cream:2, "heavy cream":2, "sour cream":2, "cream cheese":2,
+      mozzarella:2, parmesan:2, cheddar:2, ricotta:2, "cottage cheese":2, "goat cheese":2,
+      egg:2, eggs:2, yogurt:2, "half and half":2, "whipping cream":2,
+      // Meat & Seafood
+      chicken:3, beef:3, pork:3, lamb:3, turkey:3, bacon:3, sausage:3, "ground beef":3,
+      salmon:3, shrimp:3, tuna:3, cod:3, tilapia:3, anchovy:3, pancetta:3, prosciutto:3,
+      // Pantry
+      flour:4, sugar:4, "brown sugar":4, "powdered sugar":4, salt:4, pepper:4, "black pepper":4,
+      oil:4, "olive oil":4, "vegetable oil":4, "coconut oil":4, "sesame oil":4,
+      vinegar:4, "balsamic vinegar":4, "apple cider vinegar":4, "rice vinegar":4,
+      "soy sauce":4, "fish sauce":4, "worcestershire sauce":4, "hot sauce":4,
+      "tomato paste":4, "tomato sauce":4, "crushed tomatoes":4, "diced tomatoes":4,
+      pasta:4, rice:4, quinoa:4, oats:4, breadcrumbs:4, cornmeal:4, cornstarch:4,
+      "baking soda":4, "baking powder":4, "vanilla extract":4, yeast:4,
+      honey:4, "maple syrup":4, "cocoa powder":4, chocolate:4, "chocolate chips":4,
+      "chicken broth":4, "beef broth":4, "vegetable broth":4, stock:4,
+      tahini:4, "peanut butter":4, "almond butter":4, jam:4,
+      "canned beans":4, "black beans":4, chickpeas:4, lentils:4,
+      // Spices
+      cinnamon:5, cumin:5, paprika:5, turmeric:5, "chili powder":5, "cayenne pepper":5,
+      "red pepper flakes":5, "italian seasoning":5, "garlic powder":5, "onion powder":5,
+      "dried oregano":5, "dried thyme":5, "dried basil":5, nutmeg:5, cardamom:5,
+      "bay leaf":5, "bay leaves":5, cloves:5, "allspice":5, "curry powder":5,
+      gochujang:5, "miso paste":5, "sriracha":5, harissa:5,
+      // Bakery/Bread
+      bread:6, "sandwich bread":6, baguette:6, tortilla:6, "pita bread":6, naan:6, roll:6,
+      // Frozen
+      "frozen peas":7, "frozen corn":7, "frozen spinach":7, "ice cream":7,
+      // Canned/Jarred
+      "pizza sauce":8, "pasta sauce":8, "marinara":8, "alfredo sauce":8,
+      capers:8, olives:8, "sun-dried tomatoes":8, "roasted peppers":8,
+    };
+
+    const AISLE_NAMES = {
+      1: "🥦 Produce",
+      2: "🧀 Dairy & Eggs",
+      3: "🥩 Meat & Seafood",
+      4: "🫙 Pantry",
+      5: "🌶️ Spices & Condiments",
+      6: "🍞 Bakery & Bread",
+      7: "🧊 Frozen",
+      8: "🥫 Canned & Jarred",
+      9: "🛒 Other",
+    };
+
+    const categoryCache = JSON.parse(localStorage.getItem('oe_cat_cache') || '{}');
+
+    function normalizeIngredient(name) {
+      return name.toLowerCase()
+        .replace(/,.*$/, '')
+        .replace(/\(.*?\)/g, '')
+        .replace(/(fresh|dried|chopped|minced|sliced|diced|grated|shredded|cooked|uncooked|whole|large|small|medium|extra|lean|boneless|skinless|unsalted|salted|softened|melted|room temperature|divided|optional)/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function lookupCategory(name) {
+      const norm = normalizeIngredient(name);
+      // exact match
+      if (AISLE_MAP[norm] !== undefined) return AISLE_MAP[norm];
+      // partial match
+      for (const [key, val] of Object.entries(AISLE_MAP)) {
+        if (norm.includes(key) || key.includes(norm)) return val;
+      }
+      return 9; // Other
+    }
+
+    async function categorizeUnknowns(items) {
+      const unknown = items.filter(i => {
+        const norm = normalizeIngredient(i.name);
+        return categoryCache[norm] === undefined && lookupCategory(i.name) === 9;
+      });
+      if (unknown.length === 0) return;
+
+      const names = unknown.map(i => normalizeIngredient(i.name));
+      const prompt = `Categorize each ingredient into exactly one of these grocery store aisle numbers:
+1=Produce, 2=Dairy & Eggs, 3=Meat & Seafood, 4=Pantry/Dry Goods, 5=Spices & Condiments, 6=Bakery, 7=Frozen, 8=Canned & Jarred, 9=Other
+
+Ingredients: ${names.join(", ")}
+
+Respond ONLY with valid JSON object mapping each ingredient name to its aisle number. Example: {"garlic": 1, "mozzarella": 2}`;
+
+      try {
+        const res = await fetch(WORKER, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: names.join(", "), prompt })
+        });
+        const raw = await res.text();
+        let data;
+        try { data = JSON.parse(raw); } catch { return; }
+        const result = data.recipe || data;
+        for (const [name, cat] of Object.entries(result)) {
+          categoryCache[name] = cat;
+        }
+        localStorage.setItem('oe_cat_cache', JSON.stringify(categoryCache));
+      } catch { }
+    }
+
+    // ── shopping list ─────────────────────────────────────────────────────────
+    let shopItems = JSON.parse(localStorage.getItem('oe_shop') || '[]');
+
+    function saveShopItems() {
+      localStorage.setItem('oe_shop', JSON.stringify(shopItems));
+    }
+
+    function openShopFromRecipe() {
+      if (!currentRecipe || !currentRecipe.ingredients) return;
+      const existing = shopItems.map(i => i.name.toLowerCase());
+      const toAdd = currentRecipe.ingredients
+        .filter(i => !existing.includes(i.name.toLowerCase()))
+        .map(i => ({ name: i.name, qty: i.qty, checked: false, cat: lookupCategory(i.name) }));
+      shopItems = [...shopItems, ...toAdd];
+      saveShopItems();
+      categorizeUnknowns(toAdd).then(() => { saveShopItems(); renderShop(); });
+      renderShop();
+      openShop();
+    }
+
+    function openShop() {
+      renderShop();
+      document.getElementById('shop-screen').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeShop() {
+      document.getElementById('shop-screen').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function renderShop() {
+      const el = document.getElementById('shop-content');
+      if (shopItems.length === 0) {
+        el.innerHTML = `<div class="shop-empty"><i class="ti ti-shopping-cart" aria-hidden="true"></i>your shopping list is empty.<br>add ingredients from a recipe.</div>`;
+        return;
+      }
+      const byCat = {};
+      for (const item of shopItems) {
+        const cat = categoryCache[normalizeIngredient(item.name)] || item.cat || 9;
+        if (!byCat[cat]) byCat[cat] = [];
+        byCat[cat].push(item);
+      }
+      const sortedCats = Object.keys(byCat).map(Number).sort((a,b) => a-b);
+      el.innerHTML = sortedCats.map(cat => {
+        const items = byCat[cat];
+        const rows = items.map(item => `
+          <div class="shop-item ${item.checked ? 'checked' : ''}" onclick="toggleShopItem('${item.name.replace(/'/g,"\'")}')">
+            <div class="shop-check"></div>
+            <span class="shop-item-name">${item.name}</span>
+            <span style="font-size:11px;color:var(--muted)">${item.qty||''}</span>
+          </div>`).join('');
+        return `<div class="aisle-group"><div class="aisle-label">${AISLE_NAMES[cat]||'Other'}</div>${rows}</div>`;
+      }).join('');
+    }
+
+    function toggleShopItem(name) {
+      const item = shopItems.find(i => i.name === name);
+      if (item) { item.checked = !item.checked; saveShopItems(); renderShop(); }
+    }
+
+    function clearChecked() {
+      shopItems = shopItems.filter(i => !i.checked);
+      saveShopItems();
+      renderShop();
+    }
+
+    // ── saved recipes ─────────────────────────────────────────────────────────
+    function getSavedRecipes() {
+      return JSON.parse(localStorage.getItem('oe_saved') || '[]');
+    }
+
+    function saveSavedRecipes(list) {
+      localStorage.setItem('oe_saved', JSON.stringify(list));
+    }
+
+    function toggleSave() {
+      if (!currentRecipe) return;
+      let saved = getSavedRecipes();
+      const idx = saved.findIndex(r => r.title === currentRecipe.title);
+      if (idx === -1) {
+        saved.unshift({ ...currentRecipe, savedAt: Date.now() });
+        document.getElementById('save-btn').className = 'action-btn saved';
+        document.getElementById('save-btn').innerHTML = '<i class="ti ti-bookmark"></i> saved';
+      } else {
+        saved.splice(idx, 1);
+        document.getElementById('save-btn').className = 'action-btn';
+        document.getElementById('save-btn').innerHTML = '<i class="ti ti-bookmark"></i> save recipe';
+      }
+      saveSavedRecipes(saved);
+    }
+
+    function openSaved() {
+      renderSaved();
+      document.getElementById('saved-screen').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSaved() {
+      document.getElementById('saved-screen').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function renderSaved() {
+      const saved = getSavedRecipes();
+      const el = document.getElementById('saved-cards');
+      if (saved.length === 0) {
+        el.innerHTML = `<div class="saved-empty"><i class="ti ti-bookmark" aria-hidden="true"></i>no saved recipes yet.<br>save a recipe while viewing it.</div>`;
+        return;
+      }
+      el.innerHTML = saved.map((r, idx) => `
+        <div class="saved-card">
+          <div class="saved-card-info" onclick="loadSaved(${idx})">
+            <strong>${r.title}</strong>
+            <span>${r.yield||''} ${r.time ? '· ' + r.time : ''}</span>
+          </div>
+          <button class="saved-card-del" onclick="deleteSaved(${idx})" aria-label="delete"><i class="ti ti-trash" aria-hidden="true"></i></button>
+        </div>`).join('');
+    }
+
+    function loadSaved(idx) {
+      const saved = getSavedRecipes();
+      closeSaved();
+      renderRecipe(saved[idx], 'saved');
+    }
+
+    function deleteSaved(idx) {
+      const saved = getSavedRecipes();
+      saved.splice(idx, 1);
+      saveSavedRecipes(saved);
+      renderSaved();
+    }
+
+    // ── tab nav ───────────────────────────────────────────────────────────────
+    function showTab(tab) {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (tab === 'home') {
+        document.getElementById('nav-home').classList.add('active');
+      } else if (tab === 'saved') {
+        document.getElementById('nav-saved').classList.add('active');
+        openSaved();
+      } else if (tab === 'shop') {
+        document.getElementById('nav-shop').classList.add('active');
+        openShop();
+      }
+    }
 
   </script>
 </body>
