@@ -512,7 +512,15 @@ Respond ONLY with valid JSON, no markdown fences, no explanation, no preamble:
       if (metaEl) metaEl.innerHTML = meta;
 
       const pillWrap = document.getElementById('source-pill-wrap');
-      pillWrap.innerHTML = '';
+      const isSaved = getSavedRecipes().some(r => r.title === data.title);
+      pillWrap.innerHTML = `<div class="recipe-actions">
+        <button class="action-btn ${isSaved ? 'saved' : ''}" id="save-btn" onclick="toggleSave()">
+          <i class="ti ti-bookmark"></i> ${isSaved ? 'saved' : 'save recipe'}
+        </button>
+        <button class="action-btn" onclick="openShopFromRecipe()">
+          <i class="ti ti-shopping-cart"></i> add to shopping
+        </button>
+      </div>`;
 
       document.getElementById('ing-list').innerHTML = (data.ingredients || []).map(i =>
         `<div class="ing-item"><span class="ing-qty">${i.qty||''}</span><span>${i.name||''}</span></div>`
