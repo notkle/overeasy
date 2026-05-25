@@ -13,421 +13,113 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
     :root {
-      --yolk: #F2A61D;
-      --yolk-dark: #C4820D;
-      --yolk-light: #FEF3DC;
-      --cream: #FFFDF7;
-      --shell: #2C2A22;
-      --muted: #8A8778;
-      --surface: #F4F2EB;
-      --card: #FFFFFF;
-      --border: rgba(44,42,34,0.1);
+      --yolk: #F2A61D; --yolk-dark: #C4820D; --yolk-light: #FEF3DC;
+      --cream: #FFFDF7; --shell: #2C2A22; --muted: #8A8778;
+      --surface: #F4F2EB; --card: #FFFFFF; --border: rgba(44,42,34,0.1);
       --border-med: rgba(44,42,34,0.18);
-      --measure: #D85A30;
-      --timer: #185FA5;
-      --sensory: #0F6E56;
+      --measure: #D85A30; --timer: #185FA5; --sensory: #0F6E56;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-
-    html, body {
-      height: 100%;
-      background: var(--cream);
-      color: var(--shell);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .app {
-      max-width: 430px;
-      margin: 0 auto;
-      min-height: 100%;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    /* ── header ── */
-    .header {
-      padding: calc(14px + var(--safe-top)) 20px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--cream);
-      border-bottom: 0.5px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .logo {
-      font-family: 'Fraunces', serif;
-      font-weight: 300;
-      font-size: 22px;
-      letter-spacing: -0.5px;
-      color: var(--shell);
-    }
+    html, body { height: 100%; background: var(--cream); color: var(--shell); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    .app { max-width: 430px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column; }
+    .header { padding: calc(14px + var(--safe-top)) 20px 14px; display: flex; align-items: center; justify-content: space-between; background: var(--cream); border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .logo { font-family: 'Fraunces', serif; font-weight: 300; font-size: 22px; letter-spacing: -0.5px; }
     .logo span { color: var(--yolk); }
-
-    /* ── screens ── */
     .screen { display: none; flex-direction: column; flex: 1; }
     .screen.active { display: flex; }
-
-    /* ── home ── */
-    .home-hero {
-      padding: 40px 24px 28px;
-      text-align: center;
-      animation: fadeUp 0.4s ease both;
-    }
-    .home-hero h1 {
-      font-family: 'Fraunces', serif;
-      font-weight: 300;
-      font-size: 32px;
-      line-height: 1.18;
-      color: var(--shell);
-      margin-bottom: 10px;
-    }
+    .home-hero { padding: 40px 24px 28px; text-align: center; animation: fadeUp 0.4s ease both; }
+    .home-hero h1 { font-family: 'Fraunces', serif; font-weight: 300; font-size: 32px; line-height: 1.18; margin-bottom: 10px; }
     .home-hero h1 em { font-style: italic; color: var(--yolk); }
     .home-hero p { font-size: 14px; color: var(--muted); line-height: 1.65; }
-
-    .url-box {
-      margin: 0 20px 10px;
-      animation: fadeUp 0.4s 0.05s ease both;
-    }
-    .url-input-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--card);
-      border: 1px solid var(--border-med);
-      border-radius: 16px;
-      padding: 11px 12px 11px 16px;
-      transition: border-color 0.15s;
-    }
+    .url-box { margin: 0 20px 10px; animation: fadeUp 0.4s 0.05s ease both; }
+    .url-input-wrap { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border-med); border-radius: 16px; padding: 11px 12px 11px 16px; transition: border-color 0.15s; }
     .url-input-wrap:focus-within { border-color: var(--yolk); }
     .url-input-wrap i { font-size: 18px; color: var(--muted); flex-shrink: 0; }
-    .url-input-wrap input {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      color: var(--shell);
-      background: transparent;
-      min-width: 0;
-    }
+    .url-input-wrap input { flex: 1; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--shell); background: transparent; min-width: 0; }
     .url-input-wrap input::placeholder { color: var(--muted); }
-    .go-btn {
-      background: var(--yolk);
-      border: none;
-      border-radius: 11px;
-      color: white;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 9px 18px;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: background 0.15s, transform 0.1s;
-    }
+    .go-btn { background: var(--yolk); border: none; border-radius: 11px; color: white; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 9px 18px; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: background 0.15s, transform 0.1s; }
     .go-btn:active { background: var(--yolk-dark); transform: scale(0.97); }
     .go-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-
-    .error-msg {
-      margin: 0 20px 10px;
-      background: #FCEBEB;
-      border: 0.5px solid #F09595;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 13px;
-      color: #A32D2D;
-      display: none;
-      line-height: 1.5;
-    }
+    .error-msg { margin: 0 20px 10px; background: #FCEBEB; border: 0.5px solid #F09595; border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #A32D2D; display: none; line-height: 1.5; }
     .error-msg.visible { display: block; }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 4px 20px 16px;
-      animation: fadeUp 0.4s 0.1s ease both;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 0.5px;
-      background: var(--border-med);
-    }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 4px 20px 16px; animation: fadeUp 0.4s 0.1s ease both; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 0.5px; background: var(--border-med); }
     .divider span { font-size: 11px; color: var(--muted); white-space: nowrap; }
-
-    .demo-cards {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 0 20px;
-      padding-bottom: calc(28px + var(--safe-bottom));
-      animation: fadeUp 0.4s 0.12s ease both;
-    }
-    .demo-card {
-      background: var(--card);
-      border: 0.5px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
-      text-decoration: none;
-      color: inherit;
-    }
+    .demo-cards { display: flex; flex-direction: column; gap: 10px; padding: 0 20px; padding-bottom: calc(28px + var(--safe-bottom)); animation: fadeUp 0.4s 0.12s ease both; }
+    .demo-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
     .demo-card:active { border-color: var(--yolk); background: var(--yolk-light); }
     .demo-card-emoji { font-size: 30px; flex-shrink: 0; line-height: 1; }
     .demo-card-info { flex: 1; min-width: 0; }
     .demo-card-info strong { font-size: 14px; font-weight: 500; display: block; margin-bottom: 3px; }
     .demo-card-info span { font-size: 12px; color: var(--muted); }
     .demo-card .ti { font-size: 16px; color: var(--muted); flex-shrink: 0; }
-
-    /* ── loading ── */
-    .loading-screen {
-      flex: 1;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-      padding: 40px 20px;
-    }
+    .loading-screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 40px 20px; }
     .loading-screen.active { display: flex; }
-    .egg-wrap { position: relative; width: 56px; height: 56px; }
-    .egg-spin {
-      width: 56px; height: 56px;
-      border: 2.5px solid var(--border);
-      border-top-color: var(--yolk);
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
-    }
+    .egg-spin { width: 56px; height: 56px; border: 2.5px solid var(--border); border-top-color: var(--yolk); border-radius: 50%; animation: spin 0.9s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { text-align: center; }
     .loading-text p { font-size: 15px; color: var(--shell); margin-bottom: 4px; }
     .loading-text span { font-size: 13px; color: var(--muted); }
-
-    /* ── recipe ── */
     .recipe-screen { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-
     .recipe-header { padding: 20px 20px 0; }
-    .recipe-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: var(--muted);
-      cursor: pointer;
-      margin-bottom: 18px;
-      background: none;
-      border: none;
-      font-family: 'DM Sans', sans-serif;
-      padding: 0;
-    }
-    .recipe-back i { font-size: 16px; }
-    .recipe-title {
-      font-family: 'Fraunces', serif;
-      font-weight: 300;
-      font-size: 26px;
-      line-height: 1.2;
-      margin-bottom: 10px;
-    }
-    .recipe-meta {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-    .recipe-meta span {
-      font-size: 13px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .recipe-meta i { font-size: 15px; }
+    .recipe-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; margin-bottom: 18px; background: none; border: none; font-family: 'DM Sans', sans-serif; padding: 0; }
+    .recipe-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: 26px; line-height: 1.2; margin-bottom: 10px; }
+    .recipe-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    .recipe-meta span { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
     .stars { color: var(--yolk); }
-
-    .source-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      font-weight: 500;
-      padding: 4px 10px;
-      border-radius: 20px;
-      margin-bottom: 18px;
-    }
-    .source-pill i { font-size: 12px; }
+    .source-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; margin-bottom: 18px; }
     .source-pill.schema { background: #E1F5EE; color: #0F6E56; }
     .source-pill.jina { background: #E6F1FB; color: #185FA5; }
-
-    .legend {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      padding: 0 20px;
-      margin-bottom: 18px;
-    }
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 0 20px; margin-bottom: 18px; }
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
     .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-    .section-label {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 0 20px;
-      margin-bottom: 10px;
-    }
-
-    /* ── ingredients ── */
-    .ingredients-bar {
-      margin: 0 20px 22px;
-      background: var(--surface);
-      border-radius: 14px;
-      overflow: hidden;
-      border: 0.5px solid var(--border);
-    }
-    .ing-header {
-      padding: 13px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      user-select: none;
-    }
+    .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0 20px; margin-bottom: 10px; }
+    .ingredients-bar { margin: 0 20px 22px; background: var(--surface); border-radius: 14px; overflow: hidden; border: 0.5px solid var(--border); }
+    .ing-header { padding: 13px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
     .ing-header span { font-size: 14px; font-weight: 500; }
     .ing-header i { font-size: 16px; color: var(--muted); transition: transform 0.22s ease; }
     .ing-header.open i { transform: rotate(180deg); }
     .ing-list { display: none; padding: 0 16px 14px; }
     .ing-list.open { display: block; }
-    .ing-item {
-      display: flex;
-      gap: 10px;
-      font-size: 13px;
-      padding: 6px 0;
-      border-bottom: 0.5px solid var(--border);
-    }
+    .ing-item { display: flex; gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 0.5px solid var(--border); }
     .ing-item:last-child { border-bottom: none; }
     .ing-qty { color: var(--measure); font-weight: 500; min-width: 80px; flex-shrink: 0; }
-
-    /* ── steps ── */
-    .steps-list {
-      padding: 0 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding-bottom: calc(40px + var(--safe-bottom));
-    }
-
-    .step-card {
-      background: var(--card);
-      border: 0.5px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-    }
+    .steps-list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; padding-bottom: calc(40px + var(--safe-bottom)); }
+    .step-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 18px; overflow: hidden; }
     .step-main { padding: 15px 17px; }
-    .step-num {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 9px;
-      display: flex;
-      align-items: center;
-    }
-    .depth-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--yolk);
-      margin-left: auto;
-      flex-shrink: 0;
-    }
-    .step-brief {
-      font-size: 15px;
-      line-height: 1.6;
-      color: var(--shell);
-    }
+    .step-num { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 9px; display: flex; align-items: center; }
+    .depth-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--yolk); margin-left: auto; flex-shrink: 0; }
+    .step-brief { font-size: 15px; line-height: 1.6; color: var(--shell); }
     .step-brief .measure { color: var(--measure); font-weight: 500; }
     .step-brief .timer { color: var(--timer); font-weight: 500; }
     .step-brief .sensory { color: var(--sensory); font-style: italic; }
-
     .step-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 11px; }
-    .step-tag {
-      font-size: 11px;
-      font-weight: 500;
-      padding: 4px 9px;
-      border-radius: 20px;
-    }
+    .step-tag { font-size: 11px; font-weight: 500; padding: 4px 9px; border-radius: 20px; }
     .step-tag.time { background: #E6F1FB; color: #185FA5; }
     .step-tag.temp { background: #FAECE7; color: #993C1D; }
     .step-tag.check { background: #E1F5EE; color: #0F6E56; }
-
-    .drawer-toggle {
-      width: 100%;
-      border: none;
-      background: var(--surface);
-      border-top: 0.5px solid var(--border);
-      padding: 10px 17px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      color: var(--muted);
-      transition: background 0.15s;
-    }
-    .drawer-toggle:active { background: var(--border); }
-    .drawer-toggle i { font-size: 14px; transition: transform 0.22s ease; flex-shrink: 0; }
+    .drawer-toggle { width: 100%; border: none; background: var(--surface); border-top: 0.5px solid var(--border); padding: 10px 17px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted); }
+    .drawer-toggle i { font-size: 14px; transition: transform 0.22s ease; }
     .drawer-toggle.open i { transform: rotate(180deg); }
-
-    .step-original {
-      display: none;
-      padding: 13px 17px 15px;
-      font-size: 13px;
-      line-height: 1.72;
-      color: var(--muted);
-      border-top: 0.5px solid var(--border);
-      background: var(--surface);
-      font-style: italic;
-    }
+    .step-original { display: none; padding: 13px 17px 15px; font-size: 13px; line-height: 1.72; color: var(--muted); border-top: 0.5px solid var(--border); background: var(--surface); font-style: italic; }
     .step-original.open { display: block; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
   <div class="app">
-
     <div class="header">
       <div class="logo">over<span>easy</span></div>
       <i class="ti ti-adjustments-horizontal" style="font-size:20px;color:var(--muted)" aria-hidden="true"></i>
     </div>
 
-    <!-- home -->
     <div class="screen active" id="home-screen">
       <div class="home-hero">
         <h1>recipes,<br><em>actually easy.</em></h1>
         <p>paste a recipe url and we'll break it<br>down into clear, colorized steps.</p>
       </div>
-
       <div class="url-box">
         <div class="url-input-wrap">
           <i class="ti ti-link" aria-hidden="true"></i>
@@ -435,65 +127,47 @@
           <button class="go-btn" id="go-btn" onclick="handleUrl()">go</button>
         </div>
       </div>
-
       <div class="error-msg" id="error-msg"></div>
-
       <div class="divider"><span>or try a demo</span></div>
-
       <div class="demo-cards">
         <div class="demo-card" onclick="loadDemo('bread')">
           <div class="demo-card-emoji">🍞</div>
-          <div class="demo-card-info">
-            <strong>homemade sandwich bread</strong>
-            <span>Sally's Baking Addiction · demo</span>
-          </div>
+          <div class="demo-card-info"><strong>homemade sandwich bread</strong><span>Sally's Baking Addiction · demo</span></div>
           <i class="ti ti-chevron-right"></i>
         </div>
         <div class="demo-card" onclick="loadDemo('pasta')">
           <div class="demo-card-emoji">🍝</div>
-          <div class="demo-card-info">
-            <strong>cacio e pepe</strong>
-            <span>Serious Eats · demo</span>
-          </div>
+          <div class="demo-card-info"><strong>cacio e pepe</strong><span>Serious Eats · demo</span></div>
           <i class="ti ti-chevron-right"></i>
         </div>
         <div class="demo-card" onclick="loadDemo('cookies')">
           <div class="demo-card-emoji">🍪</div>
-          <div class="demo-card-info">
-            <strong>chocolate chip cookies</strong>
-            <span>NYT Cooking · demo</span>
-          </div>
+          <div class="demo-card-info"><strong>chocolate chip cookies</strong><span>NYT Cooking · demo</span></div>
           <i class="ti ti-chevron-right"></i>
         </div>
       </div>
     </div>
 
-    <!-- loading -->
     <div class="loading-screen" id="loading-screen">
-      <div class="egg-wrap"><div class="egg-spin"></div></div>
+      <div class="egg-spin"></div>
       <div class="loading-text">
         <p id="loading-msg">fetching recipe...</p>
         <span id="loading-sub">this usually takes 10–15 seconds</span>
       </div>
     </div>
 
-    <!-- recipe -->
     <div class="screen" id="recipe-screen">
       <div class="recipe-header">
-        <button class="recipe-back" onclick="goHome()">
-          <i class="ti ti-arrow-left"></i> back
-        </button>
+        <button class="recipe-back" onclick="goHome()"><i class="ti ti-arrow-left"></i> back</button>
         <div class="recipe-title" id="recipe-title"></div>
         <div class="recipe-meta" id="recipe-meta"></div>
         <div id="source-pill"></div>
       </div>
-
       <div class="legend">
         <div class="legend-item"><div class="legend-dot" style="background:var(--measure)"></div>measurement</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--timer)"></div>time</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--sensory)"></div>sensory cue</div>
       </div>
-
       <div class="section-label">ingredients</div>
       <div class="ingredients-bar">
         <div class="ing-header" id="ing-header" onclick="toggleIngredients()">
@@ -502,11 +176,9 @@
         </div>
         <div class="ing-list" id="ing-list"></div>
       </div>
-
       <div class="section-label">steps</div>
       <div class="steps-list" id="steps-list"></div>
     </div>
-
   </div>
 
   <script>
@@ -514,75 +186,79 @@
 
     const DEMOS = {
       bread: {
-        title: 'homemade sandwich bread',
-        rating: '4.9', ratingCount: '2.4k', time: '2 hrs 30 min', yield: '1 loaf', source: 'demo',
+        title: 'homemade sandwich bread', rating: '4.9', ratingCount: '2.4k', time: '2 hrs 30 min', yield: '1 loaf', source: 'demo',
         ingredients: [
-          { qty: '1 pkt (2¼ tsp)', name: 'active dry yeast' },
-          { qty: '1¼ cups', name: 'warm water (110°F)' },
-          { qty: '3 cups', name: 'all-purpose flour, plus more' },
-          { qty: '1½ tsp', name: 'salt' },
-          { qty: '2 tbsp', name: 'honey or sugar' },
-          { qty: '2 tbsp', name: 'unsalted butter, softened' },
+          { qty: '1 pkt (2¼ tsp)', name: 'active dry yeast' }, { qty: '1¼ cups', name: 'warm water (110°F)' },
+          { qty: '3 cups', name: 'all-purpose flour, plus more' }, { qty: '1½ tsp', name: 'salt' },
+          { qty: '2 tbsp', name: 'honey or sugar' }, { qty: '2 tbsp', name: 'unsalted butter, softened' },
         ],
         steps: [
-          { brief: 'Whisk together <span class="measure">1¼ cups warm water</span> and <span class="measure">2¼ tsp yeast</span>. Let sit <span class="timer">5–10 minutes</span> until <span class="sensory">foamy and fragrant</span>.', tags: [{type:'time',label:'10 min'},{type:'check',label:'foamy test'}], original: 'Whisk the warm water and yeast together in the bowl of your stand mixer fitted with a dough hook. Cover and allow to sit for 5-10 minutes. The mixture should be frothy after 10 minutes. If not, start over with fresh yeast.', hasDepth: true },
-          { brief: 'Add <span class="measure">2 tbsp honey</span>, <span class="measure">2 tbsp butter</span>, and <span class="measure">1½ tsp salt</span>. Mix briefly on low to combine.', tags: [], original: 'Add the honey, butter, and salt. Beat on low speed for 30 seconds to combine.', hasDepth: false },
-          { brief: 'Knead on medium <span class="timer">5 full minutes</span>. If sticky, add flour <span class="measure">1 tsp</span> at a time. Dough should <span class="sensory">slowly bounce back</span> when poked.', tags: [{type:'time',label:'5 min'},{type:'check',label:'poke test'},{type:'check',label:'windowpane test'}], original: 'Keep the dough in the mixer and beat for an additional 5 full minutes, or knead by hand on a lightly floured surface for 5 full minutes. If the dough becomes too sticky during the kneading process, sprinkle 1 teaspoon of flour at a time. Do not add more flour than you need because you do not want a dry dough. After kneading, the dough should still feel a little soft. Poke it with your finger — if it slowly bounces back, your dough is ready to rise. You can also do a "windowpane test" to see if your dough has been kneaded long enough.', hasDepth: true },
-          { brief: 'Shape into a ball, place in oiled bowl, cover. Rise in a warm spot <span class="timer">1–2 hours</span> until <span class="sensory">doubled in size</span>.', tags: [{type:'time',label:'1–2 hrs'},{type:'check',label:'double size'}], original: 'Lightly grease a large bowl. Place the dough in the bowl, turning it to coat all sides. Cover and allow the dough to rise at room temperature until double in size, about 1-2 hours.', hasDepth: false },
-          { brief: 'Bake at <span class="measure">350°F</span> for <span class="timer">30–35 minutes</span> until golden. Tap bottom — should sound <span class="sensory">hollow</span>. Internal temp: <span class="measure">195–200°F</span>.', tags: [{type:'temp',label:'350°F'},{type:'time',label:'30–35 min'},{type:'check',label:'hollow tap'}], original: 'Bake for 30-35 minutes at 350°F until the top is golden brown. Remove from oven and tap the bottom — it should sound hollow. You can also use an instant-read thermometer — the bread is done when the center reads 195-200°F. Allow to cool in the pan for 10 minutes, then transfer to a wire rack to cool completely before slicing.', hasDepth: true },
+          { brief: 'Whisk together <span class="measure">1¼ cups warm water</span> and <span class="measure">2¼ tsp yeast</span>. Let sit <span class="timer">5–10 minutes</span> until <span class="sensory">foamy and fragrant</span>.', tags: [{type:'time',label:'10 min'},{type:'check',label:'foamy test'}], original: 'Whisk the warm water and yeast together in the bowl of your stand mixer. Cover and allow to sit for 5-10 minutes. The mixture should be frothy after 10 minutes. If not, start over with fresh yeast.', hasDepth: true },
+          { brief: 'Add <span class="measure">2 tbsp honey</span>, <span class="measure">2 tbsp butter</span>, and <span class="measure">1½ tsp salt</span>. Mix briefly on low.', tags: [], original: 'Add the honey, butter, and salt. Beat on low speed for 30 seconds to combine.', hasDepth: false },
+          { brief: 'Knead on medium <span class="timer">5 full minutes</span>. If sticky, add flour <span class="measure">1 tsp</span> at a time. Should <span class="sensory">slowly bounce back</span> when poked.', tags: [{type:'time',label:'5 min'},{type:'check',label:'poke test'},{type:'check',label:'windowpane test'}], original: 'Keep the dough in the mixer and beat for an additional 5 full minutes, or knead by hand on a lightly floured surface. If the dough becomes too sticky, sprinkle 1 teaspoon of flour at a time. Do not add more flour than you need. After kneading, poke it — if it slowly bounces back, your dough is ready.', hasDepth: true },
+          { brief: 'Place in oiled bowl, cover. Rise in a warm spot <span class="timer">1–2 hours</span> until <span class="sensory">doubled in size</span>.', tags: [{type:'time',label:'1–2 hrs'},{type:'check',label:'double size'}], original: 'Lightly grease a large bowl. Place the dough in the bowl, turning to coat all sides. Cover and allow to rise at room temperature until double in size, about 1-2 hours.', hasDepth: false },
+          { brief: 'Bake at <span class="measure">350°F</span> for <span class="timer">30–35 minutes</span> until golden. Internal temp <span class="measure">195–200°F</span>. Tap bottom — should sound <span class="sensory">hollow</span>.', tags: [{type:'temp',label:'350°F'},{type:'time',label:'30–35 min'},{type:'check',label:'hollow tap'}], original: 'Bake for 30-35 minutes at 350°F until the top is golden brown. Tap the bottom — it should sound hollow. Use an instant-read thermometer — done when center reads 195-200°F. Cool in pan 10 minutes, then on a wire rack.', hasDepth: true },
         ]
       },
       pasta: {
-        title: 'cacio e pepe',
-        rating: '4.8', ratingCount: '891', time: '25 min', yield: '2 servings', source: 'demo',
+        title: 'cacio e pepe', rating: '4.8', ratingCount: '891', time: '25 min', yield: '2 servings', source: 'demo',
         ingredients: [
-          { qty: '200g', name: 'spaghetti or tonnarelli' },
-          { qty: '2 tsp', name: 'whole black peppercorns' },
-          { qty: '2 oz (57g)', name: 'Pecorino Romano, finely grated' },
-          { qty: '1 oz (28g)', name: 'Parmesan, finely grated' },
+          { qty: '200g', name: 'spaghetti or tonnarelli' }, { qty: '2 tsp', name: 'whole black peppercorns' },
+          { qty: '2 oz (57g)', name: 'Pecorino Romano, finely grated' }, { qty: '1 oz (28g)', name: 'Parmesan, finely grated' },
         ],
         steps: [
-          { brief: 'Toast <span class="measure">2 tsp peppercorns</span> in a dry skillet <span class="timer">1–2 minutes</span> until <span class="sensory">fragrant and slightly smoking</span>. Crush coarsely.', tags: [{type:'time',label:'2 min'}], original: 'Add whole peppercorns to a large, dry skillet over medium heat. Toast, tossing frequently, until fragrant and wisps of smoke appear, 1 to 2 minutes. Transfer to a mortar and crush into a coarse grind — not powder.', hasDepth: true },
-          { brief: 'Cook pasta in lightly salted water. Pull <span class="timer">2 minutes</span> before al dente. Reserve <span class="measure">1½ cups</span> pasta water before draining.', tags: [{type:'check',label:'save pasta water'}], original: 'Bring a large pot of water to a boil. Use about half as much salt as you normally would — the cheese is very salty. Cook pasta until about 2 minutes shy of al dente. Before draining, reserve at least 1½ cups of the starchy pasta cooking water — this is critical for the sauce.', hasDepth: true },
-          { brief: 'Mix grated cheeses with <span class="measure">¼ cup</span> warm pasta water into a <span class="sensory">smooth, paste-like</span> slurry. Set aside.', tags: [{type:'check',label:'smooth paste'}], original: 'Combine the finely grated Pecorino and Parmesan in a bowl. Add about ¼ cup of the hot pasta water and work until it forms a smooth, thick paste. The cheese must be grated very finely — coarse grating will make the sauce grainy. Set aside.', hasDepth: true },
-          { brief: 'Remove pan from heat. Add cheese paste, tossing rapidly. Add pasta water <span class="measure">1–2 tbsp</span> at a time until sauce is <span class="sensory">glossy and clings</span> to each strand.', tags: [{type:'check',label:'glossy sauce'}], original: 'Remove the pan from the heat entirely — this is critical. Add the cheese paste and toss furiously, adding pasta water a little at a time. The residual heat will melt the cheese without scrambling it. Keep tossing until a glossy, cohesive sauce clings to every strand. If it seizes up, add a tiny splash of water and keep moving.', hasDepth: true },
+          { brief: 'Toast <span class="measure">2 tsp peppercorns</span> in a dry skillet <span class="timer">1–2 minutes</span> until <span class="sensory">fragrant and slightly smoking</span>. Crush coarsely.', tags: [{type:'time',label:'2 min'}], original: 'Add whole peppercorns to a large, dry skillet over medium heat. Toast, tossing frequently, until fragrant and wisps of smoke appear, 1 to 2 minutes. Crush into a coarse grind — not powder.', hasDepth: true },
+          { brief: 'Cook pasta in lightly salted water. Pull <span class="timer">2 minutes</span> before al dente. Reserve <span class="measure">1½ cups</span> pasta water before draining.', tags: [{type:'check',label:'save pasta water'}], original: 'Bring a large pot of water to a boil. Use about half as much salt as usual — the cheese is very salty. Cook pasta until 2 minutes shy of al dente. Reserve at least 1½ cups of starchy pasta water before draining.', hasDepth: true },
+          { brief: 'Mix grated cheeses with <span class="measure">¼ cup</span> warm pasta water into a <span class="sensory">smooth, paste-like</span> slurry.', tags: [{type:'check',label:'smooth paste'}], original: 'Combine the finely grated Pecorino and Parmesan. Add about ¼ cup of the hot pasta water and work until it forms a smooth, thick paste. Cheese must be grated very finely — coarse grating will make the sauce grainy.', hasDepth: true },
+          { brief: 'Remove pan from heat. Add cheese paste, tossing rapidly. Add pasta water <span class="measure">1–2 tbsp</span> at a time until sauce is <span class="sensory">glossy and clings</span> to each strand.', tags: [{type:'check',label:'glossy sauce'}], original: 'Remove the pan from the heat entirely — critical. Add the cheese paste and toss furiously, adding pasta water a little at a time. The residual heat melts the cheese without scrambling it. Keep tossing until a glossy sauce clings to every strand.', hasDepth: true },
         ]
       },
       cookies: {
-        title: 'chocolate chip cookies',
-        rating: '5.0', ratingCount: '3.1k', time: '45 min', yield: '24 cookies', source: 'demo',
+        title: 'chocolate chip cookies', rating: '5.0', ratingCount: '3.1k', time: '45 min', yield: '24 cookies', source: 'demo',
         ingredients: [
-          { qty: '2¼ cups', name: 'all-purpose flour' },
-          { qty: '1 tsp', name: 'baking soda' },
-          { qty: '1 tsp', name: 'kosher salt' },
-          { qty: '1 cup (2 sticks)', name: 'unsalted butter, softened' },
-          { qty: '¾ cup', name: 'granulated sugar' },
-          { qty: '¾ cup', name: 'packed brown sugar' },
-          { qty: '2 large', name: 'eggs, room temp' },
-          { qty: '2 tsp', name: 'pure vanilla extract' },
+          { qty: '2¼ cups', name: 'all-purpose flour' }, { qty: '1 tsp', name: 'baking soda' },
+          { qty: '1 tsp', name: 'kosher salt' }, { qty: '1 cup (2 sticks)', name: 'unsalted butter, softened' },
+          { qty: '¾ cup', name: 'granulated sugar' }, { qty: '¾ cup', name: 'packed brown sugar' },
+          { qty: '2 large', name: 'eggs, room temp' }, { qty: '2 tsp', name: 'pure vanilla extract' },
           { qty: '2 cups', name: 'chocolate chips' },
         ],
         steps: [
-          { brief: 'Whisk together <span class="measure">2¼ cups flour</span>, <span class="measure">1 tsp baking soda</span>, and <span class="measure">1 tsp salt</span>. Set aside. Preheat oven to <span class="measure">375°F</span>.', tags: [{type:'temp',label:'375°F'}], original: 'Preheat oven to 375°F. Stir together the flour, baking soda, and salt in a small bowl. Set aside.', hasDepth: false },
-          { brief: 'Beat <span class="measure">1 cup butter</span>, <span class="measure">¾ cup granulated</span>, and <span class="measure">¾ cup brown sugar</span> together <span class="timer">3–4 minutes</span> until <span class="sensory">light, fluffy, and pale</span>.', tags: [{type:'time',label:'3–4 min'},{type:'check',label:'pale & fluffy'}], original: 'Beat butter and both sugars together in a large bowl with an electric mixer on medium-high speed until the mixture is very light and fluffy, about 3 to 4 minutes. Don\'t rush this step — proper creaming creates air pockets that give the cookies lift.', hasDepth: true },
-          { brief: 'Add <span class="measure">2 eggs</span> one at a time, beating after each. Add <span class="measure">2 tsp vanilla</span>. Scrape bowl sides.', tags: [], original: 'Add the eggs, one at a time, beating well after each addition. Add the vanilla extract. Scrape down the sides and bottom of the bowl as needed.', hasDepth: false },
-          { brief: 'Add flour mixture on low — mix until <span class="sensory">just combined</span>. Fold in <span class="measure">2 cups</span> chocolate chips by hand. Do not overmix.', tags: [{type:'check',label:"don't overmix"}], original: 'Add the flour mixture all at once and mix on the lowest speed until just combined — a few streaks of flour are fine. Overmixing develops gluten and makes cookies tough. Switch to a rubber spatula and fold in the chocolate chips by hand.', hasDepth: true },
-          { brief: 'Scoop <span class="measure">1½ tbsp</span> balls onto lined sheets, <span class="measure">2 inches</span> apart. Bake <span class="timer">9–11 minutes</span> until edges are golden.', tags: [{type:'temp',label:'375°F'},{type:'time',label:'9–11 min'}], original: 'Drop rounded tablespoons of dough about 2 inches apart onto ungreased baking sheets. Bake for 9 to 11 minutes or until golden brown. For chewier cookies, pull them out when the centers still look slightly underdone — they firm up as they cool.', hasDepth: true },
-          { brief: 'Cool on sheet <span class="timer">5 minutes</span> — they\'ll look <span class="sensory">underdone but will firm up</span>. Transfer to a wire rack.', tags: [{type:'time',label:'5 min'},{type:'check',label:'carryover baking'}], original: 'Allow cookies to cool on the baking sheets for 5 minutes before removing. They will look underdone when you pull them — this is intentional. The cookies continue to cook on the hot baking sheet and will firm up to the perfect chewy texture as they cool.', hasDepth: true },
+          { brief: 'Whisk <span class="measure">2¼ cups flour</span>, <span class="measure">1 tsp baking soda</span>, <span class="measure">1 tsp salt</span>. Set aside. Preheat oven to <span class="measure">375°F</span>.', tags: [{type:'temp',label:'375°F'}], original: 'Preheat oven to 375°F. Stir together the flour, baking soda, and salt in a small bowl. Set aside.', hasDepth: false },
+          { brief: 'Beat <span class="measure">1 cup butter</span> and both sugars <span class="timer">3–4 minutes</span> until <span class="sensory">light, fluffy, and pale</span>.', tags: [{type:'time',label:'3–4 min'},{type:'check',label:'pale & fluffy'}], original: 'Beat butter and both sugars together on medium-high until very light and fluffy, about 3-4 minutes. Don\'t rush — proper creaming creates the lift.', hasDepth: true },
+          { brief: 'Add <span class="measure">2 eggs</span> one at a time, beating after each. Add <span class="measure">2 tsp vanilla</span>. Scrape bowl.', tags: [], original: 'Add eggs one at a time, beating well after each. Add vanilla. Scrape down sides and bottom of bowl.', hasDepth: false },
+          { brief: 'Add flour mixture on low until <span class="sensory">just combined</span>. Fold in <span class="measure">2 cups</span> chocolate chips by hand. Do not overmix.', tags: [{type:'check',label:"don't overmix"}], original: 'Add flour mixture all at once on lowest speed until just combined — a few streaks of flour are fine. Overmixing develops gluten and toughens cookies. Fold in chips by hand.', hasDepth: true },
+          { brief: 'Scoop <span class="measure">1½ tbsp</span> balls <span class="measure">2 inches</span> apart on lined sheets. Bake <span class="timer">9–11 minutes</span> until edges are golden.', tags: [{type:'temp',label:'375°F'},{type:'time',label:'9–11 min'}], original: 'Drop rounded tablespoons of dough 2 inches apart on baking sheets. Bake 9-11 minutes until golden. For chewier cookies, pull out when centers still look slightly underdone.', hasDepth: true },
+          { brief: 'Cool on sheet <span class="timer">5 minutes</span> — they\'ll look <span class="sensory">underdone but will firm up</span>. Then transfer to a rack.', tags: [{type:'time',label:'5 min'},{type:'check',label:'carryover baking'}], original: 'Cool on baking sheets 5 minutes before removing. They will look underdone — intentional. They continue to cook on the hot sheet and firm up to perfect chewy texture as they cool.', hasDepth: true },
         ]
+      }
+    };
+
+    const log = (msg, data, color='#F2A61D') => {
+      if (data !== undefined) {
+        console.log('%c[overeasy] ' + msg, `color:${color};font-weight:bold`, data);
+      } else {
+        console.log('%c[overeasy] ' + msg, `color:${color};font-weight:bold`);
+      }
+    };
+    const err = (msg, data) => {
+      if (data !== undefined) {
+        console.error('%c[overeasy ERROR] ' + msg, 'color:red;font-weight:bold', data);
+      } else {
+        console.error('%c[overeasy ERROR] ' + msg, 'color:red;font-weight:bold');
       }
     };
 
     async function handleUrl() {
       const url = document.getElementById('url-input').value.trim();
       if (!url) return;
-      if (!url.startsWith('http')) {
-        showError('please enter a full url starting with https://');
-        return;
-      }
+      if (!url.startsWith('http')) { showError('please enter a full url starting with https://'); return; }
+
       hideError();
       document.getElementById('go-btn').disabled = true;
       showLoading('fetching recipe...', 'this usually takes 10–15 seconds');
+
+      log('firing request to worker: ' + WORKER);
+      log('recipe url being sent: ' + url);
 
       try {
         const res = await fetch(WORKER, {
@@ -590,12 +266,35 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url })
         });
-        const data = await res.json();
-        if (!res.ok || data.error) throw new Error(data.error || 'something went wrong');
+
+        log('worker HTTP status: ' + res.status);
+
+        const rawText = await res.text();
+        log('raw worker response body:', rawText);
+
+        let data;
+        try {
+          data = JSON.parse(rawText);
+          log('parsed response object:', data);
+        } catch (parseErr) {
+          err('could not parse worker response as JSON', parseErr);
+          err('raw text was:', rawText);
+          throw new Error('worker sent non-JSON: ' + rawText.slice(0, 300));
+        }
+
+        if (!res.ok || data.error) {
+          err('worker returned error:', data);
+          throw new Error(data.error || 'worker error, no message');
+        }
+
+        log('recipe extracted successfully, source: ' + data.source);
+        log('recipe object:', data.recipe, '#0F6E56');
         renderRecipe(data.recipe, data.source);
-      } catch (err) {
+
+      } catch (e) {
+        err('final catch:', e.message);
         hideLoading();
-        showError('couldn\'t load that recipe — check the url and try again. (' + err.message + ')');
+        showError('couldn\'t load that recipe — check the url and try again. (' + e.message + ')');
         document.getElementById('go-btn').disabled = false;
       }
     }
@@ -631,52 +330,39 @@
 
     function renderRecipe(data, source) {
       document.getElementById('recipe-title').textContent = data.title || 'untitled recipe';
-
       let meta = '';
       if (data.rating) meta += `<span><span class="stars">★</span> ${data.rating}${data.ratingCount ? ' (' + data.ratingCount + ')' : ''}</span>`;
       if (data.time) meta += `<span><i class="ti ti-clock"></i> ${data.time}</span>`;
       if (data.yield) meta += `<span><i class="ti ti-users"></i> ${data.yield}</span>`;
       document.getElementById('recipe-meta').innerHTML = meta;
-
       const pill = document.getElementById('source-pill');
-      if (source === 'schema') {
-        pill.innerHTML = `<span class="source-pill schema"><i class="ti ti-check"></i> structured data extracted</span>`;
-      } else if (source === 'jina') {
-        pill.innerHTML = `<span class="source-pill jina"><i class="ti ti-world"></i> extracted via page reader</span>`;
-      } else {
-        pill.innerHTML = '';
-      }
-
+      if (source === 'schema') pill.innerHTML = `<span class="source-pill schema"><i class="ti ti-check"></i> structured data extracted</span>`;
+      else if (source === 'jina') pill.innerHTML = `<span class="source-pill jina"><i class="ti ti-world"></i> extracted via page reader</span>`;
+      else pill.innerHTML = '';
       document.getElementById('ing-list').innerHTML = (data.ingredients || []).map(i =>
-        `<div class="ing-item"><span class="ing-qty">${i.qty || ''}</span><span>${i.name || ''}</span></div>`
+        `<div class="ing-item"><span class="ing-qty">${i.qty||''}</span><span>${i.name||''}</span></div>`
       ).join('');
-
       const ingHeader = document.getElementById('ing-header');
       ingHeader.classList.remove('open');
       ingHeader.querySelector('span').textContent = 'show ingredients';
       document.getElementById('ing-list').classList.remove('open');
-
       const steps = data.steps || [];
       document.getElementById('steps-list').innerHTML = steps.map((step, idx) => {
-        const tags = (step.tags || []).map(t =>
-          `<span class="step-tag ${t.type}">${t.label}</span>`
-        ).join('');
+        const tags = (step.tags||[]).map(t => `<span class="step-tag ${t.type}">${t.label}</span>`).join('');
         const dot = step.hasDepth ? `<span class="depth-dot"></span>` : '';
-        return `
-          <div class="step-card">
-            <div class="step-main">
-              <div class="step-num">step ${idx + 1} of ${steps.length}${dot}</div>
-              <div class="step-brief">${step.brief || ''}</div>
-              ${tags ? `<div class="step-tags">${tags}</div>` : ''}
-            </div>
-            <button class="drawer-toggle" onclick="toggleStep(this)">
-              <span>original notes</span>
-              <i class="ti ti-chevron-down"></i>
-            </button>
-            <div class="step-original">${step.original || ''}</div>
-          </div>`;
+        return `<div class="step-card">
+          <div class="step-main">
+            <div class="step-num">step ${idx+1} of ${steps.length}${dot}</div>
+            <div class="step-brief">${step.brief||''}</div>
+            ${tags ? `<div class="step-tags">${tags}</div>` : ''}
+          </div>
+          <button class="drawer-toggle" onclick="toggleStep(this)">
+            <span>original notes</span>
+            <i class="ti ti-chevron-down"></i>
+          </button>
+          <div class="step-original">${step.original||''}</div>
+        </div>`;
       }).join('');
-
       document.getElementById('loading-screen').classList.remove('active');
       document.getElementById('recipe-screen').classList.add('active');
       document.getElementById('recipe-screen').scrollTop = 0;
@@ -702,9 +388,7 @@
       hideError();
     }
 
-    document.getElementById('url-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') handleUrl();
-    });
+    document.getElementById('url-input').addEventListener('keydown', e => { if (e.key === 'Enter') handleUrl(); });
   </script>
 </body>
 </html>
