@@ -1072,7 +1072,7 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
       // update card border color
       const children = inner.children;
       for (let i = 0; i < children.length; i++) {
-        children[i].style.borderColor = flipped ? 'var(--sensory)' : '';
+        children[i].style.borderColor = flipped ? 'var(--sensory)' : 'var(--bg3)';
       }
       const bar = document.getElementById('cook-measure-bar');
       if (bar) {
