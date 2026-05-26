@@ -202,6 +202,8 @@
     .step-card { perspective: 1000px; }
     .step-card-inner, #cook-card-inner { position: relative; transform-style: preserve-3d; transition: transform 0.45s ease; }
     .step-card-inner.flipped, #cook-card-inner.flipped { transform: rotateY(180deg); }
+    #cook-card-inner.flipped .step-card-front { border-color: var(--sensory) !important; }
+    #cook-card-inner.flipped .step-card-back { border-color: var(--sensory) !important; }
     .step-card-front, .step-card-back {
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
@@ -267,7 +269,7 @@
     /* shopping list */
     .shop-header { padding: calc(20px + var(--safe-top)) 20px 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .shop-header h2 { font-family: "Fraunces", serif; font-weight: 300; font-size: 24px; color: var(--shell); }
-    .shop-clear { background: none; border: 0.5px solid var(--border-med); border-radius: 8px; color: var(--muted); font-family: "DM Sans", sans-serif; font-size: 12px; padding: 6px 12px; cursor: pointer; }
+    .shop-clear { background: none; border: 1.5px solid var(--border-med); border-radius: 8px; color: var(--muted); font-family: "DM Sans", sans-serif; font-size: 12px; padding: 6px 12px; cursor: pointer; }
     .shop-empty { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; line-height: 1.7; }
     .shop-empty i { font-size: 36px; display: block; margin-bottom: 12px; color: var(--border-med); }
     .aisle-group { margin: 0 20px 20px; }
@@ -1065,6 +1067,12 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
       const inner = document.getElementById('cook-card-inner');
       if (!inner) return;
       inner.classList.toggle('flipped');
+      const flipped = inner.classList.contains('flipped');
+      // update card border color
+      const children = inner.children;
+      for (let i = 0; i < children.length; i++) {
+        children[i].style.borderColor = flipped ? 'var(--sensory)' : '';
+      }
       const bar = document.getElementById('cook-measure-bar');
       if (bar) {
         const flipped = inner.classList.contains('flipped');
