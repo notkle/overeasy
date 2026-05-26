@@ -51,7 +51,7 @@
 
     .paste-box { margin: 0 20px 10px; display: flex; flex-direction: column; gap: 10px; animation: fadeUp 0.4s 0.05s ease both; }
     .paste-box textarea { width: 100%; background: var(--card); border: 1px solid var(--border-med); border-radius: 16px; padding: 14px 16px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--shell); resize: none; outline: none; line-height: 1.6; transition: border-color 0.15s; min-height: 180px; }
-    .paste-box textarea:focus { border-color: var(--yolk); }
+    .paste-box textarea:focus { border: 1.5px solid var(--yolk); }
     .paste-box textarea::placeholder { color: var(--muted); }
     .go-btn { width: 100%; background: var(--yolk); border: none; border-radius: 11px; color: #1A1814; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 13px 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background 0.15s, transform 0.1s; }
     .go-btn i { font-size: 16px; }
@@ -67,7 +67,7 @@
 
     .demo-cards { display: flex; flex-direction: column; gap: 10px; padding: 0 20px; padding-bottom: calc(28px + var(--safe-bottom)); animation: fadeUp 0.4s 0.12s ease both; }
     .demo-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
-    .demo-card:active { border-color: var(--yolk); background: var(--yolk-light); }
+    .demo-card:active { border: 1.5px solid var(--yolk); background: var(--yolk-light); }
     .demo-card-emoji { font-size: 30px; flex-shrink: 0; line-height: 1; }
     .demo-card-info { flex: 1; min-width: 0; }
     .demo-card-info strong { font-size: 14px; font-weight: 500; display: block; margin-bottom: 3px; color: var(--shell); }
@@ -265,6 +265,7 @@
     .nav-btn i { font-size: 22px; color: var(--muted); transition: color 0.15s; }
     .nav-btn span { font-size: 10px; color: var(--muted); transition: color 0.15s; }
     .nav-btn.active i, .nav-btn.active span { color: var(--yolk); }
+    .nav-btn.active { border-top: 2px solid var(--yolk); }
 
     /* shopping list */
     .shop-header { padding: calc(20px + var(--safe-top)) 20px 0; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -291,7 +292,7 @@
     .saved-empty i { font-size: 36px; display: block; margin-bottom: 12px; color: var(--border-med); }
     .saved-cards { display: flex; flex-direction: column; gap: 10px; padding: 0 20px; padding-bottom: calc(28px + var(--safe-bottom)); }
     .saved-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.15s; }
-    .saved-card:active { border-color: var(--yolk); }
+    .saved-card:active { border: 1.5px solid var(--yolk); }
     .saved-card-info { flex: 1; min-width: 0; }
     .saved-card-info strong { font-size: 14px; font-weight: 500; color: var(--shell); display: block; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .saved-card-info span { font-size: 12px; color: var(--muted); }
@@ -299,10 +300,10 @@
 
     /* recipe action bar */
     .recipe-actions { display: flex; gap: 8px; padding: 12px 20px 0; }
-    .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; color: var(--muted); font-family: "DM Sans", sans-serif; font-size: 12px; font-weight: 500; padding: 10px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+    .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--card); border: 1px solid var(--border-med); border-radius: 12px; color: var(--muted); font-family: "DM Sans", sans-serif; font-size: 12px; font-weight: 500; padding: 10px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
     .action-btn:active { border-color: var(--yolk); color: var(--yolk); }
     .action-btn i { font-size: 15px; }
-    .action-btn.saved { border-color: var(--yolk); color: var(--yolk); }
+    .action-btn.saved { border: 1.5px solid var(--yolk); color: var(--yolk); }
 
   </style>
 </head>
@@ -1008,7 +1009,7 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
         // front face
         '<div id="cook-card-inner" style="position:relative;transform-style:preserve-3d;transition:transform 0.45s ease;">' +
           // front
-          '<div style="backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:0.5px solid var(--border);border-radius:18px;overflow:hidden;">' +
+          '<div style="backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:1.5px solid var(--bg3);border-radius:18px;overflow:hidden;">' +
             '<div style="padding:15px 17px;">' +
 
               '<div class="step-brief" style="font-size:22px;line-height:1.6;">' + (step.brief||'') + '</div>' +
@@ -1024,7 +1025,7 @@ Respond ONLY with valid JSON object mapping each ingredient name to its aisle nu
           '</div>' +
           // back
           (stepIngs.length > 0
-            ? '<div style="position:absolute;inset:0;transform:rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:0.5px solid var(--border);border-radius:18px;padding:15px 17px;overflow-y:auto;">' +
+            ? '<div style="position:absolute;inset:0;transform:rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:1.5px solid var(--bg3);border-radius:18px;padding:15px 17px;overflow-y:auto;">' +
 
                 cookIngRows +
               '</div>'
